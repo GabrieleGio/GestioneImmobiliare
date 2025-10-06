@@ -1,19 +1,14 @@
 package com.demo.immobiliare.service;
 
+import com.demo.immobiliare.dto.TrattativaDTO;
+
 import java.util.List;
 import java.util.Optional;
 
-import com.demo.immobiliare.model.Trattativa;
-
 public interface ITrattativaService {
-	
-	Trattativa creaTrattativa(Trattativa trattativa);
-
-	Trattativa aggiornaTrattativa(Trattativa trattativa) throws Exception;
-
-	void eliminaTrattativa(Long id) throws Exception;
-
-	Optional<Trattativa> trovaPerId(Long id);
-
-	List<Trattativa> trovaTutti();
+    TrattativaDTO creaTrattativa(TrattativaDTO trattativaDTO);
+    TrattativaDTO aggiornaTrattativa(TrattativaDTO trattativaDTO) throws Exception;
+    void eliminaTrattativa(Long id) throws Exception;
+    Optional<TrattativaDTO> trovaPerId(Long id);
+    List<TrattativaDTO> trovaTutti();
 }

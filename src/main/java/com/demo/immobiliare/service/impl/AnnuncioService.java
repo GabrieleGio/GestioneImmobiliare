@@ -1,5 +1,7 @@
 package com.demo.immobiliare.service.impl;
 
+import com.demo.immobiliare.dto.AnnuncioDTO;
+import com.demo.immobiliare.mapper.AnnuncioMapper;
 import com.demo.immobiliare.model.Annuncio;
 import com.demo.immobiliare.repository.AnnuncioRepository;
 import com.demo.immobiliare.service.IAnnuncioService;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AnnuncioService implements IAnnuncioService {
@@ -21,16 +24,20 @@ public class AnnuncioService implements IAnnuncioService {
     }
 
     @Override
-    public Annuncio creaAnnuncio(Annuncio annuncio) {
-        return annuncioRepository.save(annuncio);
+    public AnnuncioDTO creaAnnuncio(AnnuncioDTO annuncioDTO) {
+        Annuncio annuncio = AnnuncioMapper.toEntity(annuncioDTO);
+        Annuncio saved = annuncioRepository.save(annuncio);
+        return AnnuncioMapper.toDto(saved);
     }
 
     @Override
-    public Annuncio aggiornaAnnuncio(Annuncio annuncio) throws Exception {
-        if (!annuncioRepository.existsById(annuncio.getIdAnnuncio())) {
-            throw new Exception("Annuncio con ID " + annuncio.getIdAnnuncio() + " non trovato");
+    public AnnuncioDTO aggiornaAnnuncio(AnnuncioDTO annuncioDTO) throws Exception {
+        if (!annuncioRepository.existsById(annuncioDTO.getIdAnnuncio())) {
+            throw new Exception("Annuncio con ID " + annuncioDTO.getIdAnnuncio() + " non trovato");
         }
-        return annuncioRepository.save(annuncio);
+        Annuncio annuncio = AnnuncioMapper.toEntity(annuncioDTO);
+        Annuncio updated = annuncioRepository.save(annuncio);
+        return AnnuncioMapper.toDto(updated);
     }
 
     @Override
@@ -42,12 +49,16 @@ public class AnnuncioService implements IAnnuncioService {
     }
 
     @Override
-    public Optional<Annuncio> trovaPerId(Long id) {
-        return annuncioRepository.findById(id);
+    public Optional<AnnuncioDTO> trovaPerId(Long id) {
+        return annuncioRepository.findById(id)
+                .map(AnnuncioMapper::toDto);
     }
-    
+
     @Override
-	public List<Annuncio> trovaTutti() {
-		return annuncioRepository.findAll();
-	}
+    public List<AnnuncioDTO> trovaTutti() {
+        return annuncioRepository.findAll()
+                .stream()
+                .map(AnnuncioMapper::toDto)
+                .collect(Collectors.toList());
+    }
 }

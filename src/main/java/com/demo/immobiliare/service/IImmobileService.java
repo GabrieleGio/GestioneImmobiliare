@@ -1,19 +1,14 @@
 package com.demo.immobiliare.service;
 
+import com.demo.immobiliare.dto.ImmobileDTO;
+
 import java.util.List;
 import java.util.Optional;
 
-import com.demo.immobiliare.model.Immobile;
-
 public interface IImmobileService {
-
-    Immobile creaImmobile(Immobile immobile);
-
-    Immobile aggiornaImmobile(Immobile immobile) throws Exception;
-
+    ImmobileDTO creaImmobile(ImmobileDTO immobileDTO);
+    ImmobileDTO aggiornaImmobile(ImmobileDTO immobileDTO) throws Exception;
     void eliminaImmobile(Long id) throws Exception;
-
-    Optional<Immobile> trovaPerId(Long id);
-
-	List<Immobile> trovaTutti();
+    Optional<ImmobileDTO> trovaPerId(Long id);
+    List<ImmobileDTO> trovaTutti();
 }

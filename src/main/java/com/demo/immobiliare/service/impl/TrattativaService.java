@@ -1,5 +1,7 @@
 package com.demo.immobiliare.service.impl;
 
+import com.demo.immobiliare.dto.TrattativaDTO;
+import com.demo.immobiliare.mapper.TrattativaMapper;
 import com.demo.immobiliare.model.Trattativa;
 import com.demo.immobiliare.repository.TrattativaRepository;
 import com.demo.immobiliare.service.ITrattativaService;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TrattativaService implements ITrattativaService {
@@ -21,16 +24,20 @@ public class TrattativaService implements ITrattativaService {
     }
 
     @Override
-    public Trattativa creaTrattativa(Trattativa trattativa) {
-        return trattativaRepository.save(trattativa);
+    public TrattativaDTO creaTrattativa(TrattativaDTO trattativaDTO) {
+        Trattativa trattativa = TrattativaMapper.toEntity(trattativaDTO);
+        Trattativa saved = trattativaRepository.save(trattativa);
+        return TrattativaMapper.toDto(saved);
     }
 
     @Override
-    public Trattativa aggiornaTrattativa(Trattativa trattativa) throws Exception {
-        if (!trattativaRepository.existsById(trattativa.getIdTrattativa())) {
-            throw new Exception("Trattativa con ID " + trattativa.getIdTrattativa() + " non trovata");
+    public TrattativaDTO aggiornaTrattativa(TrattativaDTO trattativaDTO) throws Exception {
+        if (!trattativaRepository.existsById(trattativaDTO.getIdTrattativa())) {
+            throw new Exception("Trattativa con ID " + trattativaDTO.getIdTrattativa() + " non trovata");
         }
-        return trattativaRepository.save(trattativa);
+        Trattativa trattativa = TrattativaMapper.toEntity(trattativaDTO);
+        Trattativa updated = trattativaRepository.save(trattativa);
+        return TrattativaMapper.toDto(updated);
     }
 
     @Override
@@ -42,12 +49,16 @@ public class TrattativaService implements ITrattativaService {
     }
 
     @Override
-    public Optional<Trattativa> trovaPerId(Long id) {
-        return trattativaRepository.findById(id);
+    public Optional<TrattativaDTO> trovaPerId(Long id) {
+        return trattativaRepository.findById(id)
+                .map(TrattativaMapper::toDto);
     }
-    
+
     @Override
-	public List<Trattativa> trovaTutti() {
-		return trattativaRepository.findAll();
-	}
+    public List<TrattativaDTO> trovaTutti() {
+        return trattativaRepository.findAll()
+                .stream()
+                .map(TrattativaMapper::toDto)
+                .collect(Collectors.toList());
+    }
 }

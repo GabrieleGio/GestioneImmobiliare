@@ -2,11 +2,14 @@ package com.demo.immobiliare.service.impl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.demo.immobiliare.dto.UtenteDTO;
+import com.demo.immobiliare.mapper.UtenteMapper;
 import com.demo.immobiliare.model.Utente;
 import com.demo.immobiliare.repository.UtenteRepository;
 import com.demo.immobiliare.service.IUtenteService;
@@ -17,89 +20,96 @@ import jakarta.transaction.Transactional;
 @Transactional
 public class UtenteService implements IUtenteService {
 
-	private final UtenteRepository utenteRepository;
-	private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final UtenteRepository utenteRepository;
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-	public UtenteService(UtenteRepository utenteRepository) {
-		this.utenteRepository = utenteRepository;
-	}
+    public UtenteService(UtenteRepository utenteRepository) {
+        this.utenteRepository = utenteRepository;
+    }
 
-	@Override
-	public Utente registraUtente(Utente utente) throws Exception {
-		if (utenteRepository.existsByUsername(utente.getUsername())) {
-			throw new Exception("Username già in uso");
-		}
-		if (utenteRepository.existsByEmail(utente.getEmail())) {
-			throw new Exception("Email già in uso");
-		}
-		utente.setPassword(passwordEncoder.encode(utente.getPassword()));
-		return utenteRepository.save(utente);
-	}
-	
-	@Override
-	public Utente aggiornaUtente(Utente utente) throws Exception {
-		Optional<Utente> utenteEsistenteOpt = utenteRepository.findById(utente.getIdUtente());
-		if (utenteEsistenteOpt.isEmpty()) {
-			throw new Exception("Utente non trovato");
-		}
+    @Override
+    public UtenteDTO registraUtente(UtenteDTO utenteDTO) throws Exception {
+        if (utenteRepository.existsByUsername(utenteDTO.getUsername())) {
+            throw new Exception("Username già in uso");
+        }
+        if (utenteRepository.existsByEmail(utenteDTO.getEmail())) {
+            throw new Exception("Email già in uso");
+        }
 
-		Utente utenteEsistente = utenteEsistenteOpt.get();
+        Utente utente = UtenteMapper.toEntity(utenteDTO);
+        utente.setPassword(passwordEncoder.encode(utente.getPassword()));
 
-		if (!utenteEsistente.getUsername().equals(utente.getUsername()) &&
-			utenteRepository.existsByUsername(utente.getUsername())) {
-			throw new Exception("Username già in uso");
-		}
+        Utente saved = utenteRepository.save(utente);
+        return UtenteMapper.toDto(saved);
+    }
 
-		if (!utenteEsistente.getEmail().equals(utente.getEmail()) &&
-			utenteRepository.existsByEmail(utente.getEmail())) {
-			throw new Exception("Email già in uso");
-		}
+    @Override
+    public UtenteDTO aggiornaUtente(UtenteDTO utenteDTO) throws Exception {
+        Optional<Utente> utenteEsistenteOpt = utenteRepository.findById(utenteDTO.getIdUtente());
+        if (utenteEsistenteOpt.isEmpty()) {
+            throw new Exception("Utente non trovato");
+        }
 
-		utenteEsistente.setUsername(utente.getUsername());
-		utenteEsistente.setEmail(utente.getEmail());
+        Utente utenteEsistente = utenteEsistenteOpt.get();
 
-		if (!passwordEncoder.matches(utente.getPassword(), utenteEsistente.getPassword())) {
-			utenteEsistente.setPassword(passwordEncoder.encode(utente.getPassword()));
-		}
+        if (!utenteEsistente.getUsername().equals(utenteDTO.getUsername()) &&
+            utenteRepository.existsByUsername(utenteDTO.getUsername())) {
+            throw new Exception("Username già in uso");
+        }
 
-		utenteEsistente.setRuolo(utente.getRuolo());
+        if (!utenteEsistente.getEmail().equals(utenteDTO.getEmail()) &&
+            utenteRepository.existsByEmail(utenteDTO.getEmail())) {
+            throw new Exception("Email già in uso");
+        }
 
-		return utenteRepository.save(utenteEsistente);
-	}
+        utenteEsistente.setUsername(utenteDTO.getUsername());
+        utenteEsistente.setEmail(utenteDTO.getEmail());
 
-	@Override
-	public Optional<Utente> trovaPerId(Long idUtente) {
-		return utenteRepository.findById(idUtente);
-	}
+        if (!passwordEncoder.matches(utenteDTO.getPassword(), utenteEsistente.getPassword())) {
+            utenteEsistente.setPassword(passwordEncoder.encode(utenteDTO.getPassword()));
+        }
 
+        utenteEsistente.setRuolo(utenteDTO.getRuolo());
 
-	@Override
-	public Optional<Utente> trovaPerUsername(String username) {
-		return utenteRepository.findByUsername(username);
-	}
-	
-	@Override
-	public List<Utente> trovaTutti() {
-		return utenteRepository.findAll();
-	}
+        Utente saved = utenteRepository.save(utenteEsistente);
+        return UtenteMapper.toDto(saved);
+    }
 
+    @Override
+    public Optional<UtenteDTO> trovaPerId(Long idUtente) {
+        return utenteRepository.findById(idUtente)
+                .map(UtenteMapper::toDto);
+    }
 
-	@Override
-	public boolean esisteUsername(String username) {
-		return utenteRepository.existsByUsername(username);
-	}
+    @Override
+    public Optional<UtenteDTO> trovaPerUsername(String username) {
+        return utenteRepository.findByUsername(username)
+                .map(UtenteMapper::toDto);
+    }
 
-	@Override
-	public boolean esisteEmail(String email) {
-		return utenteRepository.existsByEmail(email);
-	}
+    @Override
+    public List<UtenteDTO> trovaTutti() {
+        return utenteRepository.findAll()
+                .stream()
+                .map(UtenteMapper::toDto)
+                .collect(Collectors.toList());
+    }
 
-	@Override
-	public boolean verificaPassword(String username, String rawPassword) throws Exception {
-		Utente utente = utenteRepository.findByUsername(username)
-				.orElseThrow(() -> new Exception("Utente non trovato"));
+    @Override
+    public boolean esisteUsername(String username) {
+        return utenteRepository.existsByUsername(username);
+    }
 
-		return passwordEncoder.matches(rawPassword, utente.getPassword());
-	}
+    @Override
+    public boolean esisteEmail(String email) {
+        return utenteRepository.existsByEmail(email);
+    }
 
+    @Override
+    public boolean verificaPassword(String username, String rawPassword) throws Exception {
+        Utente utente = utenteRepository.findByUsername(username)
+                .orElseThrow(() -> new Exception("Utente non trovato"));
+
+        return passwordEncoder.matches(rawPassword, utente.getPassword());
+    }
 }

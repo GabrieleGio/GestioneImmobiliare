@@ -1,19 +1,14 @@
 package com.demo.immobiliare.service;
 
+import com.demo.immobiliare.dto.AnnuncioDTO;
+
 import java.util.List;
 import java.util.Optional;
 
-import com.demo.immobiliare.model.Annuncio;
-
 public interface IAnnuncioService {
-
-    Annuncio creaAnnuncio(Annuncio annuncio);
-
-    Annuncio aggiornaAnnuncio(Annuncio annuncio) throws Exception;
-
+    AnnuncioDTO creaAnnuncio(AnnuncioDTO annuncioDTO);
+    AnnuncioDTO aggiornaAnnuncio(AnnuncioDTO annuncioDTO) throws Exception;
     void eliminaAnnuncio(Long id) throws Exception;
-
-    Optional<Annuncio> trovaPerId(Long id);
-
-	List<Annuncio> trovaTutti();
+    Optional<AnnuncioDTO> trovaPerId(Long id);
+    List<AnnuncioDTO> trovaTutti();
 }

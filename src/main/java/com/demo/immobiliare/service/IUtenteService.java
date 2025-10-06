@@ -3,22 +3,15 @@ package com.demo.immobiliare.service;
 import java.util.List;
 import java.util.Optional;
 
-import com.demo.immobiliare.model.Utente;
+import com.demo.immobiliare.dto.UtenteDTO;
 
 public interface IUtenteService {
-	Utente registraUtente(Utente utente) throws Exception;
-	
-	Utente aggiornaUtente(Utente utente) throws Exception;
-
-	Optional<Utente> trovaPerId(Long id);
-
-	Optional<Utente> trovaPerUsername(String username);
-	
-	List<Utente> trovaTutti();
-
-	boolean esisteUsername(String username);
-
-	boolean esisteEmail(String email);
-
-	boolean verificaPassword(String username, String rawPassword) throws Exception;
+    UtenteDTO registraUtente(UtenteDTO utente) throws Exception;
+    UtenteDTO aggiornaUtente(UtenteDTO utente) throws Exception;
+    Optional<UtenteDTO> trovaPerId(Long idUtente);
+    Optional<UtenteDTO> trovaPerUsername(String username);
+    List<UtenteDTO> trovaTutti();
+    boolean esisteUsername(String username);
+    boolean esisteEmail(String email);
+    boolean verificaPassword(String username, String rawPassword) throws Exception;
 }

@@ -1,0 +1,53 @@
+package com.demo.immobiliare.controller;
+
+import com.demo.immobiliare.dto.TrattativaDTO;
+import com.demo.immobiliare.service.ITrattativaService;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/trattative")
+public class TrattativaController {
+
+    private final ITrattativaService trattativaService;
+
+    public TrattativaController(ITrattativaService trattativaService) {
+        this.trattativaService = trattativaService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<TrattativaDTO>> trovaTutti() {
+        List<TrattativaDTO> trattative = trattativaService.trovaTutti();
+        return ResponseEntity.ok(trattative);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<TrattativaDTO> trovaPerId(@PathVariable Long id) {
+        Optional<TrattativaDTO> trattativaOpt = trattativaService.trovaPerId(id);
+        return trattativaOpt
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    public ResponseEntity<?> creaTrattativa(@RequestBody TrattativaDTO trattativaDTO) {
+        TrattativaDTO creato = trattativaService.creaTrattativa(trattativaDTO);
+        return new ResponseEntity<>(creato, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> aggiornaTrattativa(@PathVariable Long id, @RequestBody TrattativaDTO trattativaDTO) {
+        try {
+            trattativaDTO.setIdTrattativa(id);
+            TrattativaDTO aggiornato = trattativaService.aggiornaTrattativa(trattativaDTO);
+            return ResponseEntity.ok(aggiornato);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+}

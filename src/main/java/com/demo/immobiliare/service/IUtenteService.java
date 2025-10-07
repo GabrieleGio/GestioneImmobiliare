@@ -3,6 +3,9 @@ package com.demo.immobiliare.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.demo.immobiliare.dto.UtenteDTO;
 
 public interface IUtenteService {
@@ -11,6 +14,7 @@ public interface IUtenteService {
     Optional<UtenteDTO> trovaPerId(Long idUtente);
     Optional<UtenteDTO> trovaPerUsername(String username);
     List<UtenteDTO> trovaTutti();
+    Page<UtenteDTO> trovaTuttiPaginati(Pageable pageable);
     boolean esisteUsername(String username);
     boolean esisteEmail(String email);
     boolean verificaPassword(String username, String rawPassword) throws Exception;

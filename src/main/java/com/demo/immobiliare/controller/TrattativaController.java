@@ -3,6 +3,10 @@ package com.demo.immobiliare.controller;
 import com.demo.immobiliare.dto.TrattativaDTO;
 import com.demo.immobiliare.service.ITrattativaService;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +36,19 @@ public class TrattativaController {
         return trattativaOpt
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+    
+    @GetMapping("/paginati")
+    public ResponseEntity<Page<TrattativaDTO>> getTrattativePaginate(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "idTrattativa") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+    ) {
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<TrattativaDTO> risultato = trattativaService.trovaTuttiPaginati(pageable);
+        return ResponseEntity.ok(risultato);
     }
 
     @PostMapping

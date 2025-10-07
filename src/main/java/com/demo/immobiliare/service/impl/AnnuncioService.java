@@ -7,6 +7,8 @@ import com.demo.immobiliare.repository.AnnuncioRepository;
 import com.demo.immobiliare.service.IAnnuncioService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -60,5 +62,11 @@ public class AnnuncioService implements IAnnuncioService {
                 .stream()
                 .map(AnnuncioMapper::toDto)
                 .collect(Collectors.toList());
+    }
+    
+    @Override
+    public Page<AnnuncioDTO> trovaTuttiPaginati(Pageable pageable) {
+        return annuncioRepository.findAll(pageable)
+                .map(AnnuncioMapper::toDto);
     }
 }

@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -93,6 +95,12 @@ public class UtenteService implements IUtenteService {
                 .stream()
                 .map(UtenteMapper::toDto)
                 .collect(Collectors.toList());
+    }
+    
+    @Override
+    public Page<UtenteDTO> trovaTuttiPaginati(Pageable pageable) {
+        return utenteRepository.findAll(pageable)
+                .map(UtenteMapper::toDto);
     }
 
     @Override

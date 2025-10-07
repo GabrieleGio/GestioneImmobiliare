@@ -3,6 +3,10 @@ package com.demo.immobiliare.controller;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +28,19 @@ public class UtenteController {
     public ResponseEntity<List<UtenteDTO>> trovaTutti() {
         List<UtenteDTO> utenti = utenteService.trovaTutti();
         return ResponseEntity.ok(utenti);
+    }
+    
+    @GetMapping("/paginati")
+    public ResponseEntity<Page<UtenteDTO>> getImmobiliPaginati(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "idUtente") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+    ) {
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<UtenteDTO> risultato = utenteService.trovaTuttiPaginati(pageable);
+        return ResponseEntity.ok(risultato);
     }
 
     @GetMapping("/{id}")

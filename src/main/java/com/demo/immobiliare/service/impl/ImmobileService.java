@@ -7,6 +7,8 @@ import com.demo.immobiliare.repository.ImmobileRepository;
 import com.demo.immobiliare.service.IImmobileService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -61,4 +63,11 @@ public class ImmobileService implements IImmobileService {
                 .map(ImmobileMapper::toDto)
                 .collect(Collectors.toList());
     }
+    
+    @Override
+    public Page<ImmobileDTO> trovaTuttiPaginati(Pageable pageable) {
+        return immobileRepository.findAll(pageable)
+                .map(ImmobileMapper::toDto);
+    }
+
 }

@@ -7,6 +7,8 @@ import com.demo.immobiliare.repository.TrattativaRepository;
 import com.demo.immobiliare.service.ITrattativaService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -60,5 +62,11 @@ public class TrattativaService implements ITrattativaService {
                 .stream()
                 .map(TrattativaMapper::toDto)
                 .collect(Collectors.toList());
+    }
+    
+    @Override
+    public Page<TrattativaDTO> trovaTuttiPaginati(Pageable pageable) {
+        return trattativaRepository.findAll(pageable)
+                .map(TrattativaMapper::toDto);
     }
 }

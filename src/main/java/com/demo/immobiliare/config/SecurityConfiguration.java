@@ -2,12 +2,15 @@ package com.demo.immobiliare.config;
 
 import com.demo.immobiliare.model.Utente;
 import com.demo.immobiliare.repository.UtenteRepository;
+import com.demo.immobiliare.security.JwtTokenFilter;
+import com.demo.immobiliare.security.JwtUtil;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,20 +19,28 @@ import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfiguration {
 
     private final UtenteRepository utenteRepository;
+    private final JwtUtil jwtUtil;
 
-    public SecurityConfiguration(UtenteRepository utenteRepository) {
+    public SecurityConfiguration(UtenteRepository utenteRepository, JwtUtil jwtUtil) {
         this.utenteRepository = utenteRepository;
+        this.jwtUtil = jwtUtil;
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+    
+    @Bean
+    public JwtTokenFilter jwtTokenFilter(UserDetailsService userDetailsService) {
+        return new JwtTokenFilter(jwtUtil, userDetailsService);
     }
 
     @Bean
@@ -52,19 +63,23 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, JwtTokenFilter jwtTokenFilter) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
-            .sessionManagement(session -> session
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // questo serve per evitare che il cookie si ricordi la sessione
+            .exceptionHandling(ex -> ex
+            	    .authenticationEntryPoint((req, res, authEx) ->
+            	      res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Non autenticato"))
+            	    .accessDeniedHandler((req, res, accessEx) ->
+            	      res.sendError(HttpServletResponse.SC_FORBIDDEN, "Accesso negato"))
+            	  )
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-            	    .requestMatchers(HttpMethod.POST, "/utenti").permitAll()
-            	    .requestMatchers(HttpMethod.POST, "/utenti/login").permitAll()
-            	    .requestMatchers("/immobili/**", "/annunci/**", "/trattative/**").permitAll()
-            	    .anyRequest().authenticated()
-            	)
-
-            .httpBasic(Customizer.withDefaults());
+                .requestMatchers(HttpMethod.POST, "/utenti").permitAll()
+                .requestMatchers(HttpMethod.POST, "/utenti/login").permitAll()
+                .requestMatchers("/immobili/**", "/annunci/**", "/trattative/**").permitAll()
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

@@ -88,6 +88,12 @@ public class UtenteService implements IUtenteService {
         return utenteRepository.findByUsername(username)
                 .map(UtenteMapper::toDto);
     }
+    
+    @Override
+    public Optional<UtenteDTO> trovaPerEmail(String email){
+    	return utenteRepository.findByEmail(email)
+                .map(UtenteMapper::toDto);
+    }
 
     @Override
     public List<UtenteDTO> trovaTutti() {

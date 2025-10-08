@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.demo.immobiliare.dto.LoginRequestDTO;
 import com.demo.immobiliare.dto.UtenteDTO;
+import com.demo.immobiliare.security.JwtUtil;
 import com.demo.immobiliare.service.IUtenteService;
 
 @RestController
@@ -20,9 +21,11 @@ import com.demo.immobiliare.service.IUtenteService;
 public class UtenteController {
 
     private final IUtenteService utenteService;
+    private final JwtUtil jwtUtil;
 
-    public UtenteController(IUtenteService utenteService) {
+    public UtenteController(IUtenteService utenteService, JwtUtil jwtUtil) {
         this.utenteService = utenteService;
+        this.jwtUtil = jwtUtil;
     }
 
     @GetMapping
@@ -64,7 +67,6 @@ public class UtenteController {
     
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO request) {
-
         String email = request.getEmail();
         String password = request.getPassword();
 
@@ -75,18 +77,26 @@ public class UtenteController {
         try {
             boolean autenticato = utenteService.verificaPassword(email, password);
 
-            if (autenticato) {
-                Optional<UtenteDTO> utente = utenteService.trovaPerUsername(email);
-                return ResponseEntity.ok(utente);
-            } else {
+            if (!autenticato) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Password errata");
             }
+
+            Optional<UtenteDTO> utenteOpt = utenteService.trovaPerEmail(email);
+
+            if (utenteOpt.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utente non trovato");
+            }
+
+            UtenteDTO utente = utenteOpt.get();
+            
+            String token = jwtUtil.generateToken(utente.getEmail());
+
+            return ResponseEntity.ok().body(token);
+
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
-
-
 
     @PutMapping("/{id}")
     public ResponseEntity<?> aggiornaUtente(@PathVariable Long id, @RequestBody UtenteDTO utenteDTO) {

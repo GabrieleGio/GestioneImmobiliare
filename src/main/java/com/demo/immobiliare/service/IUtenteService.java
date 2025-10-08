@@ -13,6 +13,7 @@ public interface IUtenteService {
     UtenteDTO aggiornaUtente(UtenteDTO utente) throws Exception;
     Optional<UtenteDTO> trovaPerId(Long idUtente);
     Optional<UtenteDTO> trovaPerUsername(String username);
+    Optional<UtenteDTO> trovaPerEmail(String email);
     List<UtenteDTO> trovaTutti();
     Page<UtenteDTO> trovaTuttiPaginati(Pageable pageable);
     boolean esisteUsername(String username);

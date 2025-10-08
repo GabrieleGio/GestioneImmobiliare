@@ -38,3 +38,7 @@ logging:
   level:
     root: INFO
     org.springframework.web: DEBUG  # utile per il debug delle richieste REST
+
+jwt:
+  secret: una-chiave-segreta-molto-lunga
+  expiration: 900000 # 15 minuti

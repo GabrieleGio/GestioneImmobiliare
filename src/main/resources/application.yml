@@ -40,5 +40,5 @@ logging:
     org.springframework.web: DEBUG  # utile per il debug delle richieste REST
 
 jwt:
-  secret: una-chiave-segreta-molto-lunga
+  secret: q3G7uCj/XkTw4y2PlJv9Y6g5aO8sC1+mI4eUd/VFJlI=
   expiration: 900000 # 15 minuti

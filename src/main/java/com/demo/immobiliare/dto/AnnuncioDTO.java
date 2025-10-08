@@ -36,8 +36,6 @@ public class AnnuncioDTO {
         this.venditore = venditore;
     }
 
-    // Getter e Setter
-
     public Long getIdAnnuncio() {
         return idAnnuncio;
     }

@@ -44,8 +44,6 @@ public class TrattativaDTO {
         this.messaggio = messaggio;
     }
 
-    // Getter e Setter
-
     public Long getIdTrattativa() {
         return idTrattativa;
     }

@@ -56,8 +56,6 @@ public class ImmobileDTO {
         this.indirizzo = indirizzo;
     }
 
-    // Getter e Setter
-
     public Long getIdImmobile() {
         return idImmobile;
     }

@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.demo.immobiliare.dto.LoginRequestDTO;
 import com.demo.immobiliare.dto.UtenteDTO;
 import com.demo.immobiliare.service.IUtenteService;
 
@@ -60,6 +61,32 @@ public class UtenteController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+    
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequestDTO request) {
+
+        String email = request.getEmail();
+        String password = request.getPassword();
+
+        if (email == null || email.isEmpty() || password == null || password.isEmpty()) {
+            return ResponseEntity.badRequest().body("Email e password sono obbligatori");
+        }
+
+        try {
+            boolean autenticato = utenteService.verificaPassword(email, password);
+
+            if (autenticato) {
+                Optional<UtenteDTO> utente = utenteService.trovaPerUsername(email);
+                return ResponseEntity.ok(utente);
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Password errata");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+
 
     @PutMapping("/{id}")
     public ResponseEntity<?> aggiornaUtente(@PathVariable Long id, @RequestBody UtenteDTO utenteDTO) {

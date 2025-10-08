@@ -114,10 +114,11 @@ public class UtenteService implements IUtenteService {
     }
 
     @Override
-    public boolean verificaPassword(String username, String rawPassword) throws Exception {
-        Utente utente = utenteRepository.findByUsername(username)
+    public boolean verificaPassword(String email, String rawPassword) throws Exception {
+        Utente utente = utenteRepository.findByEmail(email)
                 .orElseThrow(() -> new Exception("Utente non trovato"));
 
         return passwordEncoder.matches(rawPassword, utente.getPassword());
     }
+
 }

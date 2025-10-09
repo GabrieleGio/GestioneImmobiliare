@@ -2,6 +2,8 @@ package com.demo.immobiliare.mapper;
 
 import com.demo.immobiliare.dto.TrattativaDTO;
 import com.demo.immobiliare.model.Trattativa;
+import com.demo.immobiliare.model.Utente;
+import com.demo.immobiliare.model.Annuncio;
 
 public class TrattativaMapper {
 
@@ -10,10 +12,13 @@ public class TrattativaMapper {
             return null;
         }
 
+        Long idUtente = trattativa.getUtente() != null ? trattativa.getUtente().getIdUtente() : null;
+        Long idAnnuncio = trattativa.getAnnuncio() != null ? trattativa.getAnnuncio().getIdAnnuncio() : null;
+
         return new TrattativaDTO(
             trattativa.getIdTrattativa(),
-            UtenteMapper.toDto(trattativa.getUtente()),
-            AnnuncioMapper.toDto(trattativa.getAnnuncio()),
+            idUtente,
+            idAnnuncio,
             trattativa.getPrezzoOfferto(),
             trattativa.getDataProposta(),
             trattativa.getStato(),
@@ -28,12 +33,20 @@ public class TrattativaMapper {
 
         Trattativa trattativa = new Trattativa();
         trattativa.setIdTrattativa(dto.getIdTrattativa());
-        trattativa.setUtente(UtenteMapper.toEntity(dto.getUtente()));
-        trattativa.setAnnuncio(AnnuncioMapper.toEntity(dto.getAnnuncio()));
+
+        Utente utente = new Utente();
+        utente.setIdUtente(dto.getIdUtente());
+        trattativa.setUtente(utente);
+
+        Annuncio annuncio = new Annuncio();
+        annuncio.setIdAnnuncio(dto.getIdAnnuncio());
+        trattativa.setAnnuncio(annuncio);
+
         trattativa.setPrezzoOfferto(dto.getPrezzoOfferto());
         trattativa.setDataProposta(dto.getDataProposta());
         trattativa.setStato(dto.getStato());
         trattativa.setMessaggio(dto.getMessaggio());
+
         return trattativa;
     }
 }

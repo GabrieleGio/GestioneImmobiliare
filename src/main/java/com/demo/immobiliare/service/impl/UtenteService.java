@@ -67,10 +67,6 @@ public class UtenteService implements IUtenteService {
         utenteEsistente.setUsername(utenteDTO.getUsername());
         utenteEsistente.setEmail(utenteDTO.getEmail());
 
-        if (!passwordEncoder.matches(utenteDTO.getPassword(), utenteEsistente.getPassword())) {
-            utenteEsistente.setPassword(passwordEncoder.encode(utenteDTO.getPassword()));
-        }
-
         utenteEsistente.setRuolo(utenteDTO.getRuolo());
 
         Utente saved = utenteRepository.save(utenteEsistente);

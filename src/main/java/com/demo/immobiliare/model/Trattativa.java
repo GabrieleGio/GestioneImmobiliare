@@ -30,17 +30,36 @@ public class Trattativa {
     private BigDecimal prezzoOfferto;
 
     @Column(name = "data_proposta", nullable = false)
-    private LocalDateTime dataProposta = LocalDateTime.now();
+    private LocalDateTime dataProposta;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "stato", nullable = false, length = 50)
-    private StatoTrattativa stato = StatoTrattativa.IN_ATTESA;
+    private StatoTrattativa stato;
 
     @Column(name = "messaggio", length = 500)
     @Size(max = 500, message = "Il messaggio non può superare i 500 caratteri")
     private String messaggio;
+    
+    public Trattativa() {}
+  
+    public Trattativa(Long idTrattativa, @NotNull(message = "L'utente è obbligatorio") Utente utente,
+			@NotNull(message = "L'annuncio è obbligatorio") Annuncio annuncio,
+			
+			@DecimalMin(value = "0.0", inclusive = false, message = "Il prezzo offerto deve essere maggiore di zero") 
+            @Digits(integer = 10, fraction = 2, message = "Prezzo offerto non valido") BigDecimal prezzoOfferto,
+            
+			@Size(max = 500, message = "Il messaggio non può superare i 500 caratteri") String messaggio) {
+		super();
+		this.idTrattativa = idTrattativa;
+		this.utente = utente;
+		this.annuncio = annuncio;
+		this.prezzoOfferto = prezzoOfferto;
+		this.dataProposta = LocalDateTime.now();
+		this.stato = StatoTrattativa.IN_ATTESA;
+		this.messaggio = messaggio;
+	}
 
-    public Long getIdTrattativa() {
+	public Long getIdTrattativa() {
         return idTrattativa;
     }
 

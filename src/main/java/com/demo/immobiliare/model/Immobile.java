@@ -60,11 +60,35 @@ public class Immobile {
         message = "L'indirizzo contiene caratteri non validi"
     )
     private String indirizzo;
+    
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "id_utente", nullable = false)
+    private Utente proprietario;
 
     public Immobile() {
 	}
     
-    public Long getIdImmobile() {
+    public Immobile(Long idImmobile,
+			@Size(max = 255, message = "Il titolo non può superare i 255 caratteri") @NotBlank(message = "Il titolo è obbligatorio") String titolo,
+			@Size(max = 255, message = "La descrizione non può superare i 255 caratteri") @NotBlank(message = "La descrizione è obbligatoria") String descrizione,
+			@DecimalMin(value = "0.0", inclusive = false, message = "Il prezzo deve essere maggiore di zero") @Digits(integer = 10, fraction = 2, message = "Prezzo non valido") @NotNull(message = "Il prezzo è obbligatorio") BigDecimal prezzo,
+			@NotNull(message = "La tipologia è obbligatoria") Tipologia tipologia,
+			@Min(value = 1, message = "La superficie deve essere almeno 1 m²") @NotNull(message = "La superficie è obbligatoria") Integer superficie,
+			@Size(max = 255, message = "L'indirizzo non può superare i 255 caratteri") @NotBlank(message = "L'indirizzo è obbligatorio") @Pattern(regexp = "^[a-zA-Z0-9àèéìòùÀÈÉÌÒÙ\\s,.'-]+$", message = "L'indirizzo contiene caratteri non validi") String indirizzo,
+			Utente proprietario) {
+		super();
+		this.idImmobile = idImmobile;
+		this.titolo = titolo;
+		this.descrizione = descrizione;
+		this.prezzo = prezzo;
+		this.tipologia = tipologia;
+		this.stato = StatoImmobile.DISPONIBILE;
+		this.superficie = superficie;
+		this.indirizzo = indirizzo;
+		this.proprietario = proprietario;
+	}
+
+	public Long getIdImmobile() {
         return idImmobile;
     }
 
@@ -127,6 +151,14 @@ public class Immobile {
     public void setIndirizzo(String indirizzo) {
         this.indirizzo = indirizzo;
     }
+
+	public Utente getProprietario() {
+		return proprietario;
+	}
+
+	public void setProprietario(Utente proprietario) {
+		this.proprietario = proprietario;
+	}
 }
 
 

@@ -13,7 +13,6 @@ public class UtenteMapper {
             utente.getIdUtente(),
             utente.getUsername(),
             utente.getEmail(),
-            utente.getPassword(),
             utente.getRuolo()
         );
     }
@@ -26,7 +25,6 @@ public class UtenteMapper {
         utente.setIdUtente(dto.getIdUtente());
         utente.setUsername(dto.getUsername());
         utente.setEmail(dto.getEmail());
-        utente.setPassword(dto.getPassword());
         utente.setRuolo(dto.getRuolo());
         return utente;
     }

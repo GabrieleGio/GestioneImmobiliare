@@ -2,6 +2,7 @@ package com.demo.immobiliare.mapper;
 
 import com.demo.immobiliare.dto.ImmobileDTO;
 import com.demo.immobiliare.model.Immobile;
+import com.demo.immobiliare.model.Utente;
 
 public class ImmobileMapper {
 
@@ -9,6 +10,8 @@ public class ImmobileMapper {
         if (immobile == null) {
             return null;
         }
+
+        Long idProprietario = immobile.getProprietario() != null ? immobile.getProprietario().getIdUtente() : null;
 
         return new ImmobileDTO(
                 immobile.getIdImmobile(),
@@ -18,7 +21,8 @@ public class ImmobileMapper {
                 immobile.getTipologia(),
                 immobile.getStato(),
                 immobile.getSuperficie(),
-                immobile.getIndirizzo()
+                immobile.getIndirizzo(),
+                idProprietario
         );
     }
 
@@ -36,6 +40,14 @@ public class ImmobileMapper {
         immobile.setStato(dto.getStato());
         immobile.setSuperficie(dto.getSuperficie());
         immobile.setIndirizzo(dto.getIndirizzo());
+
+        if (dto.getIdProprietario() != null) {
+            Utente proprietario = new Utente();
+            proprietario.setIdUtente(dto.getIdProprietario());
+            immobile.setProprietario(proprietario);
+        } else {
+            immobile.setProprietario(null);
+        }
 
         return immobile;
     }

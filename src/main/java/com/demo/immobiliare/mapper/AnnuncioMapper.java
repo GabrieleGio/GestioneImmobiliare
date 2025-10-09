@@ -2,6 +2,8 @@ package com.demo.immobiliare.mapper;
 
 import com.demo.immobiliare.dto.AnnuncioDTO;
 import com.demo.immobiliare.model.Annuncio;
+import com.demo.immobiliare.model.Immobile;
+import com.demo.immobiliare.model.Utente;
 
 public class AnnuncioMapper {
 
@@ -10,13 +12,18 @@ public class AnnuncioMapper {
             return null;
         }
 
+        Long idImmobile = annuncio.getImmobile() != null ? annuncio.getImmobile().getIdImmobile() : null;
+        Long idVenditore = annuncio.getVenditore() != null ? annuncio.getVenditore().getIdUtente() : null;
+        Long idCreatore = annuncio.getCreatore() != null ? annuncio.getCreatore().getIdUtente() : null;
+
         return new AnnuncioDTO(
             annuncio.getIdAnnuncio(),
             annuncio.getDataPubblicazione(),
             annuncio.isVisibile(),
             annuncio.getVisualizzazioni(),
-            ImmobileMapper.toDto(annuncio.getImmobile()),
-            UtenteMapper.toDto(annuncio.getVenditore())
+            idImmobile,
+            idVenditore,
+            idCreatore
         );
     }
 
@@ -30,8 +37,31 @@ public class AnnuncioMapper {
         annuncio.setDataPubblicazione(dto.getDataPubblicazione());
         annuncio.setVisibile(dto.isVisibile());
         annuncio.setVisualizzazioni(dto.getVisualizzazioni());
-        annuncio.setImmobile(ImmobileMapper.toEntity(dto.getImmobile()));
-        annuncio.setVenditore(UtenteMapper.toEntity(dto.getVenditore()));
+
+        if (dto.getIdImmobile() != null) {
+            Immobile immobile = new Immobile();
+            immobile.setIdImmobile(dto.getIdImmobile());
+            annuncio.setImmobile(immobile);
+        } else {
+            annuncio.setImmobile(null);
+        }
+
+        if (dto.getIdVenditore() != null) {
+            Utente venditore = new Utente();
+            venditore.setIdUtente(dto.getIdVenditore());
+            annuncio.setVenditore(venditore);
+        } else {
+            annuncio.setVenditore(null);
+        }
+
+        if (dto.getIdCreatore() != null) {
+            Utente creatore = new Utente();
+            creatore.setIdUtente(dto.getIdCreatore());
+            annuncio.setCreatore(creatore);
+        } else {
+            annuncio.setCreatore(null);
+        }
+
         return annuncio;
     }
 }

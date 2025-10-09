@@ -1,39 +1,28 @@
 package com.demo.immobiliare.dto;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-
 import java.time.LocalDateTime;
 
 public class AnnuncioDTO {
 
     private Long idAnnuncio;
-
-    @NotNull(message = "La data di pubblicazione è obbligatoria")
     private LocalDateTime dataPubblicazione;
-
     private boolean visibile;
-
-    @Min(value = 0, message = "Le visualizzazioni non possono essere negative")
     private int visualizzazioni;
+    private Long idImmobile;
+    private Long idVenditore;
+    private Long idCreatore;
 
-    @NotNull(message = "L'immobile associato è obbligatorio")
-    private ImmobileDTO immobile;
+    public AnnuncioDTO() {}
 
-    @NotNull(message = "Il venditore è obbligatorio")
-    private UtenteDTO venditore;
-
-    public AnnuncioDTO() {
-    }
-
-    public AnnuncioDTO(Long idAnnuncio, LocalDateTime dataPubblicazione, boolean visibile,
-                       int visualizzazioni, ImmobileDTO immobile, UtenteDTO venditore) {
+    public AnnuncioDTO(Long idAnnuncio, LocalDateTime dataPubblicazione, boolean visibile, int visualizzazioni,
+                       Long idImmobile, Long idVenditore, Long idCreatore) {
         this.idAnnuncio = idAnnuncio;
         this.dataPubblicazione = dataPubblicazione;
         this.visibile = visibile;
         this.visualizzazioni = visualizzazioni;
-        this.immobile = immobile;
-        this.venditore = venditore;
+        this.idImmobile = idImmobile;
+        this.idVenditore = idVenditore;
+        this.idCreatore = idCreatore;
     }
 
     public Long getIdAnnuncio() {
@@ -68,19 +57,27 @@ public class AnnuncioDTO {
         this.visualizzazioni = visualizzazioni;
     }
 
-    public ImmobileDTO getImmobile() {
-        return immobile;
+    public Long getIdImmobile() {
+        return idImmobile;
     }
 
-    public void setImmobile(ImmobileDTO immobile) {
-        this.immobile = immobile;
+    public void setIdImmobile(Long idImmobile) {
+        this.idImmobile = idImmobile;
     }
 
-    public UtenteDTO getVenditore() {
-        return venditore;
+    public Long getIdVenditore() {
+        return idVenditore;
     }
 
-    public void setVenditore(UtenteDTO venditore) {
-        this.venditore = venditore;
+    public void setIdVenditore(Long idVenditore) {
+        this.idVenditore = idVenditore;
+    }
+
+    public Long getIdCreatore() {
+        return idCreatore;
+    }
+
+    public void setIdCreatore(Long idCreatore) {
+        this.idCreatore = idCreatore;
     }
 }

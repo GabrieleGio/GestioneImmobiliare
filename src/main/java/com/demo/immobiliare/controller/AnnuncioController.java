@@ -52,7 +52,7 @@ public class AnnuncioController {
     }
 
     @PostMapping
-    public ResponseEntity<?> creaAnnuncio(@RequestBody AnnuncioDTO annuncioDTO) {
+    public ResponseEntity<?> creaAnnuncio(@RequestBody AnnuncioDTO annuncioDTO) throws Exception {
         AnnuncioDTO creato = annuncioService.creaAnnuncio(annuncioDTO);
         return new ResponseEntity<>(creato, HttpStatus.CREATED);
     }

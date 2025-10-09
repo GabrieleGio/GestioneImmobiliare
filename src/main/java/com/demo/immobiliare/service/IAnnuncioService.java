@@ -9,7 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface IAnnuncioService {
-    AnnuncioDTO creaAnnuncio(AnnuncioDTO annuncioDTO);
+    AnnuncioDTO creaAnnuncio(AnnuncioDTO annuncioDTO) throws Exception;
     AnnuncioDTO aggiornaAnnuncio(AnnuncioDTO annuncioDTO) throws Exception;
     void eliminaAnnuncio(Long id) throws Exception;
     Optional<AnnuncioDTO> trovaPerId(Long id);

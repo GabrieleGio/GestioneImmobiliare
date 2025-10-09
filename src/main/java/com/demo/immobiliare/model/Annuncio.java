@@ -34,8 +34,41 @@ public class Annuncio {
     @JoinColumn(name = "id_venditore", nullable = false)
     @NotNull(message = "Il venditore è obbligatorio")
     private Utente venditore;
+    
+    @ManyToOne
+    @JoinColumn(name = "id_creatore", nullable = false)
+    @NotNull(message = "Il creatore è obbligatorio")
+    private Utente creatore;
+    
+    public Annuncio() {
+	}
+    
+    public Annuncio(Long idAnnuncio,
+			@NotNull(message = "La data di pubblicazione è obbligatoria") LocalDateTime dataPubblicazione,
+			boolean visibile,
+			@Min(value = 0, message = "Le visualizzazioni non possono essere negative") int visualizzazioni,
+			@NotNull(message = "L'immobile associato è obbligatorio") Immobile immobile,
+			@NotNull(message = "Il venditore è obbligatorio") Utente venditore,
+			@NotNull(message = "Il creatore è obbligatorio") Utente creatore) {
+		super();
+		this.idAnnuncio = idAnnuncio;
+		this.dataPubblicazione = dataPubblicazione;
+		this.visibile = visibile;
+		this.visualizzazioni = visualizzazioni;
+		this.immobile = immobile;
+		this.venditore = venditore;
+		this.creatore = creatore;
+	}
+    
+	public Utente getCreatore() {
+		return creatore;
+	}
 
-    public Long getIdAnnuncio() {
+	public void setCreatore(Utente creatore) {
+		this.creatore = creatore;
+	}
+
+	public Long getIdAnnuncio() {
         return idAnnuncio;
     }
 

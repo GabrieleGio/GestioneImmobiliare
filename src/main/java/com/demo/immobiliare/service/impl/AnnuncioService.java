@@ -3,12 +3,18 @@ package com.demo.immobiliare.service.impl;
 import com.demo.immobiliare.dto.AnnuncioDTO;
 import com.demo.immobiliare.mapper.AnnuncioMapper;
 import com.demo.immobiliare.model.Annuncio;
+import com.demo.immobiliare.model.Immobile;
+import com.demo.immobiliare.model.StatoImmobile;
+import com.demo.immobiliare.model.Utente;
 import com.demo.immobiliare.repository.AnnuncioRepository;
+import com.demo.immobiliare.repository.ImmobileRepository;
+import com.demo.immobiliare.repository.UtenteRepository;
 import com.demo.immobiliare.service.IAnnuncioService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,26 +25,63 @@ import java.util.stream.Collectors;
 public class AnnuncioService implements IAnnuncioService {
 
     private final AnnuncioRepository annuncioRepository;
+    private final UtenteRepository utenteRepository;
+    private final ImmobileRepository immobileRepository;
 
     @Autowired
-    public AnnuncioService(AnnuncioRepository annuncioRepository) {
+    public AnnuncioService(AnnuncioRepository annuncioRepository, UtenteRepository utenteRepository, ImmobileRepository immobileRepository) {
         this.annuncioRepository = annuncioRepository;
+        this.utenteRepository = utenteRepository;
+        this.immobileRepository = immobileRepository;
     }
 
     @Override
-    public AnnuncioDTO creaAnnuncio(AnnuncioDTO annuncioDTO) {
+    public AnnuncioDTO creaAnnuncio(AnnuncioDTO annuncioDTO) throws Exception {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Utente utente = utenteRepository.findByUsername(username)
+                .orElseThrow(() -> new Exception("Utente non trovato"));
+
+        Immobile immobile = immobileRepository.findById(annuncioDTO.getIdImmobile())
+                .orElseThrow(() -> new Exception("Immobile non trovato"));
+
+        if (!immobile.getProprietario().getIdUtente().equals(utente.getIdUtente())) {
+            throw new Exception("Non puoi creare un annuncio per un immobile che non possiedi");
+        }
+        
+        if (immobile.getStato().equals(StatoImmobile.VENDUTO)) {
+        	throw new Exception("Non puoi mettere un annuncio per un immobile venduto");
+        }
+        
         Annuncio annuncio = AnnuncioMapper.toEntity(annuncioDTO);
+        annuncio.setImmobile(immobile);
         Annuncio saved = annuncioRepository.save(annuncio);
         return AnnuncioMapper.toDto(saved);
     }
 
     @Override
     public AnnuncioDTO aggiornaAnnuncio(AnnuncioDTO annuncioDTO) throws Exception {
-        if (!annuncioRepository.existsById(annuncioDTO.getIdAnnuncio())) {
-            throw new Exception("Annuncio con ID " + annuncioDTO.getIdAnnuncio() + " non trovato");
+        Annuncio annuncioEsistente = annuncioRepository.findById(annuncioDTO.getIdAnnuncio())
+                .orElseThrow(() -> new Exception("Annuncio con ID " + annuncioDTO.getIdAnnuncio() + " non trovato"));
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Utente utente = utenteRepository.findByUsername(username)
+                .orElseThrow(() -> new Exception("Utente non trovato"));
+
+        Immobile immobile = immobileRepository.findById(annuncioDTO.getIdImmobile())
+                .orElseThrow(() -> new Exception("Immobile non trovato"));
+
+        if (!immobile.getProprietario().getIdUtente().equals(utente.getIdUtente())) {
+            throw new Exception("Non puoi modificare un annuncio per un immobile che non possiedi");
         }
-        Annuncio annuncio = AnnuncioMapper.toEntity(annuncioDTO);
-        Annuncio updated = annuncioRepository.save(annuncio);
+        
+        if (!annuncioEsistente.getCreatore().getIdUtente().equals(utente.getIdUtente())) {
+            throw new Exception("Non puoi modificare un annuncio che non hai creato");
+        }
+
+        annuncioEsistente.setVisibile(annuncioDTO.isVisibile());
+        annuncioEsistente.setVisualizzazioni(annuncioDTO.getVisualizzazioni());
+
+        Annuncio updated = annuncioRepository.save(annuncioEsistente);
         return AnnuncioMapper.toDto(updated);
     }
 

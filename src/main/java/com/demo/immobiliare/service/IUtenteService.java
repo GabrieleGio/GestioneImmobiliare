@@ -6,10 +6,11 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import com.demo.immobiliare.dto.RegisterDTO;
 import com.demo.immobiliare.dto.UtenteDTO;
 
 public interface IUtenteService {
-    UtenteDTO registraUtente(UtenteDTO utente) throws Exception;
+    UtenteDTO registraUtente(RegisterDTO utente) throws Exception;
     UtenteDTO aggiornaUtente(UtenteDTO utente) throws Exception;
     Optional<UtenteDTO> trovaPerId(Long idUtente);
     Optional<UtenteDTO> trovaPerUsername(String username);

@@ -14,4 +14,4 @@ public class GestioneImmobiliareApplication {
 		SpringApplication.run(GestioneImmobiliareApplication.class, args);
 	}
 
-} //TODO vedere i builder, quando stampo gli utenti non devo far vedere la password
+} //TODO vedere i builder

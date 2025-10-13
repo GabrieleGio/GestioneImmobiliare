@@ -11,7 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.demo.immobiliare.dto.LoginRequestDTO;
+import com.demo.immobiliare.dto.LoginDTO;
+import com.demo.immobiliare.dto.RegisterDTO;
 import com.demo.immobiliare.dto.UtenteDTO;
 import com.demo.immobiliare.security.JwtUtil;
 import com.demo.immobiliare.service.IUtenteService;
@@ -55,10 +56,10 @@ public class UtenteController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping
-    public ResponseEntity<?> registraUtente(@RequestBody UtenteDTO utenteDTO) {
+    @PostMapping("/register")
+    public ResponseEntity<?> registraUtente(@RequestBody RegisterDTO registerDTO) {
         try {
-            UtenteDTO utenteCreato = utenteService.registraUtente(utenteDTO);
+            UtenteDTO utenteCreato = utenteService.registraUtente(registerDTO);
             return new ResponseEntity<>(utenteCreato, HttpStatus.CREATED);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -66,7 +67,7 @@ public class UtenteController {
     }
     
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequestDTO request) {
+    public ResponseEntity<?> login(@RequestBody LoginDTO request) {
         String email = request.getEmail();
         String password = request.getPassword();
 

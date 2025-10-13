@@ -1,6 +1,6 @@
 package com.demo.immobiliare.dto;
 
-public class LoginRequestDTO {
+public class LoginDTO {
     private String email;
     private String password;
 

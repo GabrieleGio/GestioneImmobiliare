@@ -74,7 +74,7 @@ public class SecurityConfiguration {
             	  )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.POST, "/utenti").permitAll()
+                .requestMatchers(HttpMethod.POST, "/utenti/register").permitAll()
                 .requestMatchers(HttpMethod.POST, "/utenti/login").permitAll()
                 .requestMatchers("/immobili/**", "/annunci/**", "/trattative/**").permitAll()
                 .anyRequest().authenticated()

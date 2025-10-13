@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.demo.immobiliare.dto.RegisterDTO;
 import com.demo.immobiliare.dto.UtenteDTO;
 import com.demo.immobiliare.mapper.UtenteMapper;
 import com.demo.immobiliare.model.Utente;
@@ -30,20 +31,25 @@ public class UtenteService implements IUtenteService {
     }
 
     @Override
-    public UtenteDTO registraUtente(UtenteDTO utenteDTO) throws Exception {
-        if (utenteRepository.existsByUsername(utenteDTO.getUsername())) {
+    public UtenteDTO registraUtente(RegisterDTO registerDTO) throws Exception {
+        if (utenteRepository.existsByUsername(registerDTO.getUsername())) {
             throw new Exception("Username già in uso");
         }
-        if (utenteRepository.existsByEmail(utenteDTO.getEmail())) {
+
+        if (utenteRepository.existsByEmail(registerDTO.getEmail())) {
             throw new Exception("Email già in uso");
         }
 
-        Utente utente = UtenteMapper.toEntity(utenteDTO);
-        utente.setPassword(passwordEncoder.encode(utente.getPassword()));
-
+        if (!registerDTO.getPassword().equals(registerDTO.getConfirmPassword())) {
+            throw new Exception("Le password non coincidono");
+        }
+        
+        String passwordCriptata = passwordEncoder.encode(registerDTO.getPassword());
+        Utente utente = UtenteMapper.fromRegisterDtoToEntity(registerDTO, passwordCriptata);
         Utente saved = utenteRepository.save(utente);
         return UtenteMapper.toDto(saved);
     }
+
 
     @Override
     public UtenteDTO aggiornaUtente(UtenteDTO utenteDTO) throws Exception {

@@ -76,7 +76,6 @@ public class SecurityConfiguration {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.POST, "/utenti/register").permitAll()
                 .requestMatchers(HttpMethod.POST, "/utenti/login").permitAll()
-                .requestMatchers("/immobili/**", "/annunci/**", "/trattative/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);

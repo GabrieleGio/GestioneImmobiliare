@@ -62,7 +62,7 @@ public class Immobile {
     private String indirizzo;
     
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "id_utente", nullable = false)
+    @JoinColumn(name = "id_utente", nullable = true)
     private Utente proprietario;
 
     public Immobile() {

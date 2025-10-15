@@ -1,5 +1,9 @@
 package com.demo.immobiliare.model;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -7,6 +11,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -18,21 +23,37 @@ public class Utente {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long idUtente;
+	
 	@Column(name = "username", nullable = false, unique = true)
 	@Size(min = 3, max = 25, message = "L'username deve essere compreso tra i 3 e i 25 caratteri")
 	private String username;
+	
 	@Column(name = "email", nullable = false, unique = true)
 	@Pattern(
 	        regexp = "^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$", 
 	        message = "Email non valida"
 	    )
 	private String email;
+	
 	@Column(name = "password", nullable = false)
 	@Size(min = 8, message = "La password deve essere composta da minimo 5 caratteri")
 	private String password;
+	
 	@Column(name = "ruolo", nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Ruolo ruolo = Ruolo.CLIENTE;
+	
+	@OneToMany(mappedBy = "proprietario")
+    @JsonIgnore
+    private List<Immobile> immobiliPosseduti;
+
+    @OneToMany(mappedBy = "creatore")
+    @JsonIgnore
+    private List<Annuncio> annunciCreati;
+
+    @OneToMany(mappedBy = "utente")
+    @JsonIgnore
+    private List<Trattativa> trattativeCreate;
 	
 	public Utente() {
 	}
@@ -48,6 +69,17 @@ public class Utente {
 		this.password = password;
 		this.ruolo = ruolo;
 	}
+	
+	public void aggiungiImmobile(Immobile immobile) {
+	    this.immobiliPosseduti.add(immobile);
+	    immobile.setProprietario(this);
+	}
+	
+	public void rimuoviImmobile(Immobile immobile) {
+		this.immobiliPosseduti.remove(immobile);
+		immobile.setProprietario(null);
+	}
+
 	public Long getIdUtente() {
 		return idUtente;
 	}
@@ -78,5 +110,22 @@ public class Utente {
 	public void setRuolo(Ruolo ruolo) {
 		this.ruolo = ruolo;
 	}
-	
+	public List<Immobile> getImmobiliPosseduti() {
+		return immobiliPosseduti;
+	}
+	public void setImmobiliPosseduti(List<Immobile> immobiliPosseduti) {
+		this.immobiliPosseduti = immobiliPosseduti;
+	}
+	public List<Annuncio> getAnnunciCreati() {
+		return annunciCreati;
+	}
+	public void setAnnunciCreati(List<Annuncio> annunciCreati) {
+		this.annunciCreati = annunciCreati;
+	}
+	public List<Trattativa> getTrattativeCreate() {
+		return trattativeCreate;
+	}
+	public void setTrattativeCreate(List<Trattativa> trattativeCreate) {
+		this.trattativeCreate = trattativeCreate;
+	}
 }

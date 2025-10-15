@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface IImmobileService {
-    ImmobileDTO creaImmobile(ImmobileDTO immobileDTO);
+    ImmobileDTO creaImmobile(ImmobileDTO immobileDTO) throws Exception;
     ImmobileDTO aggiornaImmobile(ImmobileDTO immobileDTO) throws Exception;
     void eliminaImmobile(Long id) throws Exception;
     Optional<ImmobileDTO> trovaPerId(Long id);

@@ -52,7 +52,7 @@ public class TrattativaController {
     }
 
     @PostMapping
-    public ResponseEntity<?> creaTrattativa(@RequestBody TrattativaDTO trattativaDTO) {
+    public ResponseEntity<?> creaTrattativa(@RequestBody TrattativaDTO trattativaDTO) throws Exception {
         TrattativaDTO creato = trattativaService.creaTrattativa(trattativaDTO);
         return new ResponseEntity<>(creato, HttpStatus.CREATED);
     }
@@ -67,4 +67,15 @@ public class TrattativaController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+    
+    @PutMapping("/{id}/vendi")
+    public ResponseEntity<?> vendiTrattativa(@PathVariable Long id) {
+        try {
+            trattativaService.vendi(id);
+            return ResponseEntity.ok("Trattativa con ID " + id + " conclusa con successo");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
 }

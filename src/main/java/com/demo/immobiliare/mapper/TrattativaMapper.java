@@ -2,8 +2,6 @@ package com.demo.immobiliare.mapper;
 
 import com.demo.immobiliare.dto.TrattativaDTO;
 import com.demo.immobiliare.model.Trattativa;
-import com.demo.immobiliare.model.Utente;
-import com.demo.immobiliare.model.Annuncio;
 
 public class TrattativaMapper {
 
@@ -34,13 +32,8 @@ public class TrattativaMapper {
         Trattativa trattativa = new Trattativa();
         trattativa.setIdTrattativa(dto.getIdTrattativa());
 
-        Utente utente = new Utente();
-        utente.setIdUtente(dto.getIdUtente());
-        trattativa.setUtente(utente);
-
-        Annuncio annuncio = new Annuncio();
-        annuncio.setIdAnnuncio(dto.getIdAnnuncio());
-        trattativa.setAnnuncio(annuncio);
+        trattativa.setUtente(null);
+        trattativa.setAnnuncio(null);
 
         trattativa.setPrezzoOfferto(dto.getPrezzoOfferto());
         trattativa.setDataProposta(dto.getDataProposta());
@@ -49,4 +42,5 @@ public class TrattativaMapper {
 
         return trattativa;
     }
+
 }

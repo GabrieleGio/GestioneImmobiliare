@@ -14,4 +14,4 @@ public class GestioneImmobiliareApplication {
 		SpringApplication.run(GestioneImmobiliareApplication.class, args);
 	}
 
-} //TODO vedere i builder
+} //TODO vedere i builder, impedire al venditore di comprare la sua stessa casa?

@@ -5,6 +5,7 @@ public enum StatoTrattativa {
     ACCETTATA,
     RIFIUTATA,
     ANNULLATA,
-    SCADUTA
+    SCADUTA,
+    CONCLUSA
 }
 

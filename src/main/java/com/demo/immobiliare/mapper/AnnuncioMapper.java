@@ -3,7 +3,6 @@ package com.demo.immobiliare.mapper;
 import com.demo.immobiliare.dto.AnnuncioDTO;
 import com.demo.immobiliare.model.Annuncio;
 import com.demo.immobiliare.model.Immobile;
-import com.demo.immobiliare.model.Utente;
 
 public class AnnuncioMapper {
 
@@ -46,22 +45,10 @@ public class AnnuncioMapper {
             annuncio.setImmobile(null);
         }
 
-        if (dto.getIdVenditore() != null) {
-            Utente venditore = new Utente();
-            venditore.setIdUtente(dto.getIdVenditore());
-            annuncio.setVenditore(venditore);
-        } else {
-            annuncio.setVenditore(null);
-        }
-
-        if (dto.getIdCreatore() != null) {
-            Utente creatore = new Utente();
-            creatore.setIdUtente(dto.getIdCreatore());
-            annuncio.setCreatore(creatore);
-        } else {
-            annuncio.setCreatore(null);
-        }
+        annuncio.setVenditore(null);
+        annuncio.setCreatore(null);
 
         return annuncio;
     }
+
 }

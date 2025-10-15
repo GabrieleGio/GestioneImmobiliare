@@ -37,8 +37,8 @@ public class AnnuncioService implements IAnnuncioService {
 
     @Override
     public AnnuncioDTO creaAnnuncio(AnnuncioDTO annuncioDTO) throws Exception {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Utente utente = utenteRepository.findByUsername(username)
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Utente utente = utenteRepository.findByEmail(email)
                 .orElseThrow(() -> new Exception("Utente non trovato"));
 
         Immobile immobile = immobileRepository.findById(annuncioDTO.getIdImmobile())
@@ -54,6 +54,8 @@ public class AnnuncioService implements IAnnuncioService {
         
         Annuncio annuncio = AnnuncioMapper.toEntity(annuncioDTO);
         annuncio.setImmobile(immobile);
+        annuncio.setCreatore(utente);
+        annuncio.setVenditore(immobile.getProprietario());
         Annuncio saved = annuncioRepository.save(annuncio);
         return AnnuncioMapper.toDto(saved);
     }
@@ -63,8 +65,8 @@ public class AnnuncioService implements IAnnuncioService {
         Annuncio annuncioEsistente = annuncioRepository.findById(annuncioDTO.getIdAnnuncio())
                 .orElseThrow(() -> new Exception("Annuncio con ID " + annuncioDTO.getIdAnnuncio() + " non trovato"));
 
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Utente utente = utenteRepository.findByUsername(username)
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Utente utente = utenteRepository.findByEmail(email)
                 .orElseThrow(() -> new Exception("Utente non trovato"));
 
         Immobile immobile = immobileRepository.findById(annuncioDTO.getIdImmobile())
@@ -73,7 +75,7 @@ public class AnnuncioService implements IAnnuncioService {
         if (!immobile.getProprietario().getIdUtente().equals(utente.getIdUtente())) {
             throw new Exception("Non puoi modificare un annuncio per un immobile che non possiedi");
         }
-        
+
         if (!annuncioEsistente.getCreatore().getIdUtente().equals(utente.getIdUtente())) {
             throw new Exception("Non puoi modificare un annuncio che non hai creato");
         }

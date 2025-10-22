@@ -19,6 +19,7 @@ import com.demo.immobiliare.service.IUtenteService;
 
 @RestController
 @RequestMapping("/utenti")
+@CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*", allowCredentials = "true")
 public class UtenteController {
 
     private final IUtenteService utenteService;

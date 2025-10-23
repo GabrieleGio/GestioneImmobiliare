@@ -29,7 +29,15 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                                     HttpServletResponse response, FilterChain filterChain)
                                     throws ServletException, IOException {
 
-    	final String authHeader = request.getHeader("Authorization");
+        String path = request.getRequestURI();
+
+        // Ignoro il filtro JWT per i percorsi pubblici
+        if (path.equals("/utenti/register") || path.equals("/utenti/login")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        final String authHeader = request.getHeader("Authorization");
         final String prefix = "Bearer ";
 
         if (authHeader == null || !authHeader.startsWith(prefix)) {
@@ -52,11 +60,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authToken);
 
         } catch (Exception e) {
-        	SecurityContextHolder.clearContext();
+            SecurityContextHolder.clearContext();
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token non valido o scaduto");
             return;
         }
 
         filterChain.doFilter(request, response);
     }
+
 }

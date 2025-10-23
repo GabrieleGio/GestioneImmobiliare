@@ -32,6 +32,7 @@ public class ImmobileDTO {
         this.indirizzo = indirizzo;
         this.idProprietario = idProprietario;
     }
+    
 
     public Long getIdImmobile() {
         return idImmobile;

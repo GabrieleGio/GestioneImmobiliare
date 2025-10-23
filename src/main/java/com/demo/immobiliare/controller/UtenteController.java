@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.demo.immobiliare.dto.AuthResponseDTO;
 import com.demo.immobiliare.dto.LoginDTO;
 import com.demo.immobiliare.dto.RegisterDTO;
 import com.demo.immobiliare.dto.UtenteDTO;
@@ -92,13 +93,18 @@ public class UtenteController {
             UtenteDTO utente = utenteOpt.get();
             
             String token = jwtUtil.generateToken(utente.getEmail());
+            
+            long expiresIn = jwtUtil.getExpirationTime();
 
-            return ResponseEntity.ok().body(token);
+            AuthResponseDTO authResponse = new AuthResponseDTO(token, "Bearer", expiresIn);
+
+            return ResponseEntity.ok().body(authResponse);
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<?> aggiornaUtente(@PathVariable Long id, @RequestBody UtenteDTO utenteDTO) {

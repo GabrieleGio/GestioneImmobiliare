@@ -34,4 +34,8 @@ public class JwtUtil {
         DecodedJWT jwt = verifier.verify(token);
         return jwt.getSubject();
     }
+    
+    public long getExpirationTime() {
+    	return this.expiration;
+    }
 }

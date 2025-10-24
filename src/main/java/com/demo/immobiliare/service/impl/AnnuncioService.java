@@ -1,6 +1,7 @@
 package com.demo.immobiliare.service.impl;
 
 import com.demo.immobiliare.dto.AnnuncioDTO;
+import com.demo.immobiliare.dto.AnnuncioHomeDTO;
 import com.demo.immobiliare.mapper.AnnuncioMapper;
 import com.demo.immobiliare.model.Annuncio;
 import com.demo.immobiliare.model.Immobile;
@@ -109,9 +110,29 @@ public class AnnuncioService implements IAnnuncioService {
                 .collect(Collectors.toList());
     }
     
+//    @Override
+//    public Page<AnnuncioDTO> trovaTuttiPaginati(Pageable pageable) {
+//        return annuncioRepository.findAll(pageable)
+//                .map(AnnuncioMapper::toDto);
+//    }
+    
     @Override
-    public Page<AnnuncioDTO> trovaTuttiPaginati(Pageable pageable) {
+    public Page<AnnuncioHomeDTO> trovaTuttiPaginati(Pageable pageable) {
         return annuncioRepository.findAll(pageable)
-                .map(AnnuncioMapper::toDto);
+            .map(annuncio -> {
+                Immobile immobile = annuncio.getImmobile();
+
+                return new AnnuncioHomeDTO(
+                    annuncio.getIdAnnuncio(),
+                    annuncio.getDataPubblicazione(),
+                    annuncio.isVisibile(),
+                    annuncio.getVisualizzazioni(),
+                    immobile != null ? immobile.getIdImmobile() : null,
+                    immobile != null ? immobile.getTitolo() : null,
+                    immobile != null ? immobile.getIndirizzo() : null,
+                    immobile != null ? immobile.getPrezzo() : null
+                );
+            });
     }
+
 }

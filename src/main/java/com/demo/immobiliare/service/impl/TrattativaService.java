@@ -1,6 +1,7 @@
 package com.demo.immobiliare.service.impl;
 
 import com.demo.immobiliare.dto.TrattativaDTO;
+import com.demo.immobiliare.dto.TrattativaPropostaDTO;
 import com.demo.immobiliare.mapper.TrattativaMapper;
 import com.demo.immobiliare.model.Annuncio;
 import com.demo.immobiliare.model.Immobile;
@@ -43,23 +44,28 @@ public class TrattativaService implements ITrattativaService {
         this.immobileRepository = immobileRepository;
     }
 
-    public TrattativaDTO creaTrattativa(TrattativaDTO dto) throws Exception {
-    	String email = SecurityContextHolder.getContext().getAuthentication().getName();
+    public TrattativaDTO creaTrattativa(TrattativaPropostaDTO propostaDTO) throws Exception {
+    	
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Utente utente = utenteRepository.findByEmail(email)
-                .orElseThrow(() -> new Exception("Utente non trovato"));
+            .orElseThrow(() -> new Exception("Utente non trovato"));
 
-        Annuncio annuncio = annuncioRepository.findById(dto.getIdAnnuncio())
+        Annuncio annuncio = annuncioRepository.findById(propostaDTO.getIdAnnuncio())
             .orElseThrow(() -> new Exception("Annuncio non trovato"));
 
-        Trattativa trattativa = TrattativaMapper.toEntity(dto);
+        Trattativa trattativa = new Trattativa();
         trattativa.setUtente(utente);
         trattativa.setAnnuncio(annuncio);
+        trattativa.setPrezzoOfferto(propostaDTO.getPrezzoOfferto());
+        trattativa.setMessaggio(propostaDTO.getMessaggio());
         trattativa.setDataProposta(LocalDateTime.now());
         trattativa.setStato(StatoTrattativa.IN_ATTESA);
 
         Trattativa salvata = trattativaRepository.save(trattativa);
+
         return TrattativaMapper.toDto(salvata);
     }
+
 
 
     @Override

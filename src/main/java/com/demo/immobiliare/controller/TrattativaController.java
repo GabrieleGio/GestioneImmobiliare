@@ -1,6 +1,7 @@
 package com.demo.immobiliare.controller;
 
 import com.demo.immobiliare.dto.TrattativaDTO;
+import com.demo.immobiliare.dto.TrattativaPropostaDTO;
 import com.demo.immobiliare.service.ITrattativaService;
 
 import org.springframework.data.domain.Page;
@@ -52,10 +53,11 @@ public class TrattativaController {
     }
 
     @PostMapping
-    public ResponseEntity<?> creaTrattativa(@RequestBody TrattativaDTO trattativaDTO) throws Exception {
-        TrattativaDTO creato = trattativaService.creaTrattativa(trattativaDTO);
+    public ResponseEntity<?> creaTrattativa(@RequestBody TrattativaPropostaDTO propostaDTO) throws Exception {
+        TrattativaDTO creato = trattativaService.creaTrattativa(propostaDTO);
         return new ResponseEntity<>(creato, HttpStatus.CREATED);
     }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<?> aggiornaTrattativa(@PathVariable Long id, @RequestBody TrattativaDTO trattativaDTO) {

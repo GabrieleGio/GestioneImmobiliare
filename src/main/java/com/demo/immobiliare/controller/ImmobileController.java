@@ -1,6 +1,7 @@
 package com.demo.immobiliare.controller;
 
 import com.demo.immobiliare.dto.ImmobileDTO;
+import com.demo.immobiliare.dto.ImmobilePersonaleDTO;
 import com.demo.immobiliare.service.IImmobileService;
 
 import org.springframework.data.domain.Page;
@@ -31,15 +32,18 @@ public class ImmobileController {
     }
     
     @GetMapping("/paginati")
-    public ResponseEntity<Page<ImmobileDTO>> getImmobiliPaginati(
+    public ResponseEntity<Page<ImmobilePersonaleDTO>> getImmobiliPaginati(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "idImmobile") String sortBy,
             @RequestParam(defaultValue = "asc") String direction
-    ) {
-        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+    ) throws Exception {
+    	Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<ImmobileDTO> risultato = immobileService.trovaTuttiPaginati(pageable);
+        Page<ImmobilePersonaleDTO> risultato = immobileService.trovaTuttiPersonaliPaginati(pageable);
         return ResponseEntity.ok(risultato);
     }
 

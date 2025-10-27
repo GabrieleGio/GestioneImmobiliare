@@ -1,6 +1,7 @@
 package com.demo.immobiliare.service.impl;
 
 import com.demo.immobiliare.dto.ImmobileDTO;
+import com.demo.immobiliare.dto.ImmobilePersonaleDTO;
 import com.demo.immobiliare.mapper.ImmobileMapper;
 import com.demo.immobiliare.model.Immobile;
 import com.demo.immobiliare.model.Utente;
@@ -90,10 +91,27 @@ public class ImmobileService implements IImmobileService {
                 .collect(Collectors.toList());
     }
     
-    @Override
-    public Page<ImmobileDTO> trovaTuttiPaginati(Pageable pageable) {
-        return immobileRepository.findAll(pageable)
-                .map(ImmobileMapper::toDto);
+//    @Override
+//    public Page<ImmobileDTO> trovaTuttiPaginati(Pageable pageable) {
+//        return immobileRepository.findAll(pageable)
+//                .map(ImmobileMapper::toDto);
+//    }
+    
+    public Page<ImmobilePersonaleDTO> trovaTuttiPersonaliPaginati(Pageable pageable) throws Exception {
+    	String emailUtenteLog = SecurityContextHolder.getContext().getAuthentication().getName();
+        Utente utenteLog = utenteRepository.findByEmail(emailUtenteLog)
+            .orElseThrow(() -> new Exception("Utente non trovato"));
+        
+        return immobileRepository.findAllByProprietario_IdUtente(utenteLog.getIdUtente(), pageable)
+                .map(immobile -> new ImmobilePersonaleDTO(
+                        immobile.getIdImmobile(),
+                        immobile.getTitolo(),
+                        immobile.getDescrizione(),
+                        immobile.getPrezzo(),
+                        immobile.getTipologia(),
+                        immobile.getStato(),
+                        immobile.getSuperficie(),
+                        immobile.getIndirizzo()
+                ));
     }
-
 }

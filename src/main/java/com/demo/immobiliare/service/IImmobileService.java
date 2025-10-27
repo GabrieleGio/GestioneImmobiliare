@@ -1,6 +1,7 @@
 package com.demo.immobiliare.service;
 
 import com.demo.immobiliare.dto.ImmobileDTO;
+import com.demo.immobiliare.dto.ImmobilePersonaleDTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,5 +14,5 @@ public interface IImmobileService {
     void eliminaImmobile(Long id) throws Exception;
     Optional<ImmobileDTO> trovaPerId(Long id);
     List<ImmobileDTO> trovaTutti();
-    Page<ImmobileDTO> trovaTuttiPaginati(Pageable pageable);
-}
+    Page<ImmobilePersonaleDTO> trovaTuttiPersonaliPaginati(Pageable pageable) throws Exception;
+    }

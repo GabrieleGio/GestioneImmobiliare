@@ -1,6 +1,7 @@
 package com.demo.immobiliare.service.impl;
 
 import com.demo.immobiliare.dto.TrattativaDTO;
+import com.demo.immobiliare.dto.TrattativaPersonaleDTO;
 import com.demo.immobiliare.dto.TrattativaPropostaDTO;
 import com.demo.immobiliare.mapper.TrattativaMapper;
 import com.demo.immobiliare.model.Annuncio;
@@ -123,6 +124,23 @@ public class TrattativaService implements ITrattativaService {
     public Page<TrattativaDTO> trovaTuttiPaginati(Pageable pageable) {
         return trattativaRepository.findAll(pageable)
                 .map(TrattativaMapper::toDto);
+    }
+    
+    @Override
+    public Page<TrattativaPersonaleDTO> trovaTuttiPersonaliPaginati(Pageable pageable) throws Exception {
+    	String emailUtenteLog = SecurityContextHolder.getContext().getAuthentication().getName();
+        Utente utenteLog = utenteRepository.findByEmail(emailUtenteLog)
+            .orElseThrow(() -> new Exception("Utente non trovato"));
+        
+        return trattativaRepository.findAllByUtente_IdUtente(utenteLog.getIdUtente(), pageable)
+        		.map(trattativa -> new TrattativaPersonaleDTO(
+        				trattativa.getIdTrattativa(),
+        				trattativa.getAnnuncio().getIdAnnuncio(),
+        				trattativa.getPrezzoOfferto(),
+        				trattativa.getDataProposta(),
+        				trattativa.getStato(),
+        				trattativa.getMessaggio()
+        		));
     }
 
 	@Override

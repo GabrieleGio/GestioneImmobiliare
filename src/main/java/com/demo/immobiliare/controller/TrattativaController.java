@@ -1,6 +1,7 @@
 package com.demo.immobiliare.controller;
 
 import com.demo.immobiliare.dto.TrattativaDTO;
+import com.demo.immobiliare.dto.TrattativaPersonaleDTO;
 import com.demo.immobiliare.dto.TrattativaPropostaDTO;
 import com.demo.immobiliare.service.ITrattativaService;
 
@@ -39,16 +40,19 @@ public class TrattativaController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
     
-    @GetMapping("/paginati")
-    public ResponseEntity<Page<TrattativaDTO>> getTrattativePaginate(
+    @GetMapping("/personali")
+    public ResponseEntity<Page<TrattativaPersonaleDTO>> getTrattativePersonaliPaginate(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "idTrattativa") String sortBy,
             @RequestParam(defaultValue = "asc") String direction
-    ) {
-        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+    ) throws Exception {
+    	Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<TrattativaDTO> risultato = trattativaService.trovaTuttiPaginati(pageable);
+        Page<TrattativaPersonaleDTO> risultato = trattativaService.trovaTuttiPersonaliPaginati(pageable);
         return ResponseEntity.ok(risultato);
     }
 

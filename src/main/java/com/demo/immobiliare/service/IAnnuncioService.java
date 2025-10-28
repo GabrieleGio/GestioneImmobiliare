@@ -2,6 +2,7 @@ package com.demo.immobiliare.service;
 
 import com.demo.immobiliare.dto.AnnuncioDTO;
 import com.demo.immobiliare.dto.AnnuncioHomeDTO;
+import com.demo.immobiliare.dto.AnnuncioPersonaleDTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,4 +17,5 @@ public interface IAnnuncioService {
     Optional<AnnuncioDTO> trovaPerId(Long id);
     List<AnnuncioDTO> trovaTutti();
     Page<AnnuncioHomeDTO> trovaTuttiPaginati(Pageable pageable);
+    Page<AnnuncioPersonaleDTO> trovaTuttiPersonaliPaginati(Pageable pageable) throws Exception;
 }

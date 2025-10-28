@@ -1,6 +1,7 @@
 package com.demo.immobiliare.service;
 
 import com.demo.immobiliare.dto.TrattativaDTO;
+import com.demo.immobiliare.dto.TrattativaPersonaleDTO;
 import com.demo.immobiliare.dto.TrattativaPropostaDTO;
 
 import java.util.List;
@@ -16,5 +17,6 @@ public interface ITrattativaService {
     Optional<TrattativaDTO> trovaPerId(Long id);
     List<TrattativaDTO> trovaTutti();
     Page<TrattativaDTO> trovaTuttiPaginati(Pageable pageable);
+    Page<TrattativaPersonaleDTO> trovaTuttiPersonaliPaginati(Pageable pageable) throws Exception;
     void vendi(Long id) throws Exception;;
 }

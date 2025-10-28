@@ -2,6 +2,7 @@ package com.demo.immobiliare.controller;
 
 import com.demo.immobiliare.dto.AnnuncioDTO;
 import com.demo.immobiliare.dto.AnnuncioHomeDTO;
+import com.demo.immobiliare.dto.AnnuncioPersonaleDTO;
 import com.demo.immobiliare.service.IAnnuncioService;
 
 import org.springframework.data.domain.Page;
@@ -39,7 +40,7 @@ public class AnnuncioController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
     
-    @GetMapping("/paginati")
+    @GetMapping("/paginate")
     public ResponseEntity<Page<AnnuncioHomeDTO>> getAnnunciPaginati(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -52,6 +53,22 @@ public class AnnuncioController {
 
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<AnnuncioHomeDTO> risultato = annuncioService.trovaTuttiPaginati(pageable);
+        return ResponseEntity.ok(risultato);
+    }
+    
+    @GetMapping("/personali")
+    public ResponseEntity<Page<AnnuncioPersonaleDTO>> getAnnunciPersonaliPaginati(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "idAnnuncio") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+    ) throws Exception {
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<AnnuncioPersonaleDTO> risultato = annuncioService.trovaTuttiPersonaliPaginati(pageable);
         return ResponseEntity.ok(risultato);
     }
 

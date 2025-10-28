@@ -31,8 +31,8 @@ public class ImmobileController {
         return ResponseEntity.ok(immobili);
     }
     
-    @GetMapping("/paginati")
-    public ResponseEntity<Page<ImmobilePersonaleDTO>> getImmobiliPaginati(
+    @GetMapping("/personali")
+    public ResponseEntity<Page<ImmobilePersonaleDTO>> getImmobiliPersonaliPaginati(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "idImmobile") String sortBy,

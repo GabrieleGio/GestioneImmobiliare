@@ -2,6 +2,7 @@ package com.demo.immobiliare.service.impl;
 
 import com.demo.immobiliare.dto.AnnuncioDTO;
 import com.demo.immobiliare.dto.AnnuncioHomeDTO;
+import com.demo.immobiliare.dto.AnnuncioPersonaleDTO;
 import com.demo.immobiliare.mapper.AnnuncioMapper;
 import com.demo.immobiliare.model.Annuncio;
 import com.demo.immobiliare.model.Immobile;
@@ -133,6 +134,30 @@ public class AnnuncioService implements IAnnuncioService {
                     immobile != null ? immobile.getPrezzo() : null
                 );
             });
+    }
+    
+    @Override
+    public Page<AnnuncioPersonaleDTO> trovaTuttiPersonaliPaginati(Pageable pageable) throws Exception {
+    	String emailUtenteLog = SecurityContextHolder.getContext().getAuthentication().getName();
+        Utente utenteLog = utenteRepository.findByEmail(emailUtenteLog)
+            .orElseThrow(() -> new Exception("Utente non trovato"));
+        
+        return annuncioRepository.findAllByCreatore_IdUtente(utenteLog.getIdUtente(), pageable)
+        		.map(annuncio -> {
+        			Immobile immobile = annuncio.getImmobile();
+        			
+        			return new AnnuncioPersonaleDTO(
+        				annuncio.getIdAnnuncio(),
+        				annuncio.getDataPubblicazione(),
+        				annuncio.isVisibile(),
+        				annuncio.getVisualizzazioni(),
+        				immobile != null ? immobile.getIdImmobile() : null,
+        	            immobile != null ? immobile.getTitolo() : null,
+        	            immobile != null ? immobile.getIndirizzo() : null,
+        	            immobile != null ? immobile.getPrezzo() : null,
+        				annuncio.getVenditore().getIdUtente()
+        		);
+        	});
     }
 
 }

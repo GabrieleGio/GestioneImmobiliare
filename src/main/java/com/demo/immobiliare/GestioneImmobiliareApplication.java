@@ -15,5 +15,5 @@ public class GestioneImmobiliareApplication {
 	}
 
 } //TODO fare pagina 'i tuoi annunci' dove hai la possibilità di vedere le trattative ricevute per un proprio annuncio
-	// con la possibilità di accettarle oppure rifiutarle, fare pagina 'le tue trattative' dove vedi le trattative proposte da te
+	// con la possibilità di accettarle oppure rifiutarle,
 	// sistemare e implementare le service per aggiornare ed eliminare, fare controlli vari nelle service di creazione

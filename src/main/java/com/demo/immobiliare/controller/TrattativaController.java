@@ -55,6 +55,27 @@ public class TrattativaController {
         Page<TrattativaPersonaleDTO> risultato = trattativaService.trovaTuttiPersonaliPaginati(pageable);
         return ResponseEntity.ok(risultato);
     }
+    
+    @GetMapping("/annuncio/{idAnnuncio}")
+    public ResponseEntity<Page<TrattativaDTO>> getTrattativePerAnnuncioPersonale(
+            @PathVariable Long idAnnuncio, 
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "idTrattativa") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) throws Exception {
+    	
+    	if (idAnnuncio == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        
+        Sort sort = direction.equalsIgnoreCase("desc") 
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+        
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<TrattativaDTO> risultato = trattativaService.trovaTuttiPerAnnuncioPersonale(idAnnuncio, pageable);
+        return ResponseEntity.ok(risultato);
+    }
 
     @PostMapping
     public ResponseEntity<?> creaTrattativa(@RequestBody TrattativaPropostaDTO propostaDTO) throws Exception {

@@ -142,6 +142,32 @@ public class TrattativaService implements ITrattativaService {
         				trattativa.getMessaggio()
         		));
     }
+    
+    @Override
+    public Page<TrattativaDTO> trovaTuttiPerAnnuncioPersonale(Long idAnnuncio, Pageable pageable) throws Exception {
+    	String emailUtenteLog = SecurityContextHolder.getContext().getAuthentication().getName();
+        Utente utenteLog = utenteRepository.findByEmail(emailUtenteLog)
+            .orElseThrow(() -> new Exception("Utente non trovato"));
+        
+        Annuncio annuncio = annuncioRepository.findById(idAnnuncio)
+        		.orElseThrow(() -> new Exception("Annuncio non trovato"));
+        
+        if (!annuncio.getCreatore().equals(utenteLog)) {
+        	throw new Exception("Non puoi visualizzare trattative di annunci che non sono tuoi");
+        }
+        
+        return trattativaRepository.findAllByAnnuncio_IdAnnuncio(idAnnuncio, pageable)
+        		.map(trattativa -> new TrattativaDTO(
+        				trattativa.getIdTrattativa(),
+        				trattativa.getUtente().getIdUtente(),
+        				trattativa.getAnnuncio().getIdAnnuncio(),
+        				trattativa.getPrezzoOfferto(),
+        				trattativa.getDataProposta(),
+        				trattativa.getStato(),
+        				trattativa.getMessaggio()
+        				
+        				));
+    }
 
 	@Override
 	@Transactional

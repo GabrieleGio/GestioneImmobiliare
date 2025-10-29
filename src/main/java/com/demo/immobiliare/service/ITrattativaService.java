@@ -18,5 +18,6 @@ public interface ITrattativaService {
     List<TrattativaDTO> trovaTutti();
     Page<TrattativaDTO> trovaTuttiPaginati(Pageable pageable);
     Page<TrattativaPersonaleDTO> trovaTuttiPersonaliPaginati(Pageable pageable) throws Exception;
+    Page<TrattativaDTO> trovaTuttiPerAnnuncioPersonale(Long idAnnuncio, Pageable pageable) throws Exception;
     void vendi(Long id) throws Exception;;
 }

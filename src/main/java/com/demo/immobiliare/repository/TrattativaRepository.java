@@ -8,5 +8,6 @@ import com.demo.immobiliare.model.Trattativa;
 
 public interface TrattativaRepository extends JpaRepository<Trattativa, Long> {
 	Page<Trattativa> findAllByUtente_IdUtente(Long utenteId, Pageable pageable);
+	Page<Trattativa> findAllByAnnuncio_IdAnnuncio(Long annuncioId, Pageable pageable);
 
 }

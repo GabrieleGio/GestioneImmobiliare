@@ -18,6 +18,8 @@ import com.demo.immobiliare.dto.UtenteDTO;
 import com.demo.immobiliare.security.JwtUtil;
 import com.demo.immobiliare.service.IUtenteService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/utenti")
 @CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*", allowCredentials = "true")
@@ -59,7 +61,7 @@ public class UtenteController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registraUtente(@RequestBody RegisterDTO registerDTO) {
+    public ResponseEntity<?> registraUtente(@Valid @RequestBody RegisterDTO registerDTO) {
         try {
             UtenteDTO utenteCreato = utenteService.registraUtente(registerDTO);
             return new ResponseEntity<>(utenteCreato, HttpStatus.CREATED);
@@ -69,7 +71,7 @@ public class UtenteController {
     }
     
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDTO request) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginDTO request) {
         String email = request.getEmail();
         String password = request.getPassword();
 
@@ -107,7 +109,7 @@ public class UtenteController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> aggiornaUtente(@PathVariable Long id, @RequestBody UtenteDTO utenteDTO) {
+    public ResponseEntity<?> aggiornaUtente(@PathVariable Long id, @Valid @RequestBody UtenteDTO utenteDTO) {
         try {
             utenteDTO.setIdUtente(id);
             UtenteDTO utenteAggiornato = utenteService.aggiornaUtente(utenteDTO);

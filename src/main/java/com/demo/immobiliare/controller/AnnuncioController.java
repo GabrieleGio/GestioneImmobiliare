@@ -5,6 +5,8 @@ import com.demo.immobiliare.dto.AnnuncioHomeDTO;
 import com.demo.immobiliare.dto.AnnuncioPersonaleDTO;
 import com.demo.immobiliare.service.IAnnuncioService;
 
+import jakarta.validation.Valid;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -74,13 +76,13 @@ public class AnnuncioController {
 
 
     @PostMapping
-    public ResponseEntity<?> creaAnnuncio(@RequestBody AnnuncioDTO annuncioDTO) throws Exception {
+    public ResponseEntity<?> creaAnnuncio(@Valid @RequestBody AnnuncioDTO annuncioDTO) throws Exception {
         AnnuncioDTO creato = annuncioService.creaAnnuncio(annuncioDTO);
         return new ResponseEntity<>(creato, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> aggiornaAnnuncio(@PathVariable Long id, @RequestBody AnnuncioDTO annuncioDTO) {
+    public ResponseEntity<?> aggiornaAnnuncio(@PathVariable Long id, @Valid @RequestBody AnnuncioDTO annuncioDTO) {
         try {
             annuncioDTO.setIdAnnuncio(id);
             AnnuncioDTO aggiornato = annuncioService.aggiornaAnnuncio(annuncioDTO);

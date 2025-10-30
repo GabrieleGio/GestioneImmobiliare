@@ -14,6 +14,10 @@ public class GestioneImmobiliareApplication {
 		SpringApplication.run(GestioneImmobiliareApplication.class, args);
 	}
 
-} //TODO fare pagina 'i tuoi annunci' dove hai la possibilità di vedere le trattative ricevute per un proprio annuncio
-	// con la possibilità di accettarle oppure rifiutarle,
-	// sistemare e implementare le service per aggiornare ed eliminare, fare controlli vari nelle service di creazione
+}   //TODO fare una funzione rifiuta trattativa con controlli simili a quella per venderla
+	// sistemare e implementare le service per aggiornare ed eliminare
+	// mettere controlli ai dto !!!
+	// fare un global exception handler !!!
+	// mettere controlli mancanti di lunghezza massima e minima e vedere se sono corretti con DB
+	// implementare lato front end funzioni per creare immobili e annunci con relativi validators
+	// mettere controlli lato front end di quando un email o username è già in uso

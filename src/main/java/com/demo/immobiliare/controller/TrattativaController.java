@@ -5,6 +5,8 @@ import com.demo.immobiliare.dto.TrattativaPersonaleDTO;
 import com.demo.immobiliare.dto.TrattativaPropostaDTO;
 import com.demo.immobiliare.service.ITrattativaService;
 
+import jakarta.validation.Valid;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -78,14 +80,14 @@ public class TrattativaController {
     }
 
     @PostMapping
-    public ResponseEntity<?> creaTrattativa(@RequestBody TrattativaPropostaDTO propostaDTO) throws Exception {
+    public ResponseEntity<?> creaTrattativa(@Valid @RequestBody TrattativaPropostaDTO propostaDTO) throws Exception {
         TrattativaDTO creato = trattativaService.creaTrattativa(propostaDTO);
         return new ResponseEntity<>(creato, HttpStatus.CREATED);
     }
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> aggiornaTrattativa(@PathVariable Long id, @RequestBody TrattativaDTO trattativaDTO) {
+    public ResponseEntity<?> aggiornaTrattativa(@PathVariable Long id, @Valid @RequestBody TrattativaDTO trattativaDTO) {
         try {
             trattativaDTO.setIdTrattativa(id);
             TrattativaDTO aggiornato = trattativaService.aggiornaTrattativa(trattativaDTO);

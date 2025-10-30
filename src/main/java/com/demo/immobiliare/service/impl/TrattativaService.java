@@ -6,6 +6,7 @@ import com.demo.immobiliare.dto.TrattativaPropostaDTO;
 import com.demo.immobiliare.mapper.TrattativaMapper;
 import com.demo.immobiliare.model.Annuncio;
 import com.demo.immobiliare.model.Immobile;
+import com.demo.immobiliare.model.StatoImmobile;
 import com.demo.immobiliare.model.StatoTrattativa;
 import com.demo.immobiliare.model.Trattativa;
 import com.demo.immobiliare.model.Utente;
@@ -176,24 +177,50 @@ public class TrattativaService implements ITrattativaService {
 		Trattativa trattativa = trattativaRepository.findById(idTrattativa)
 			    .orElseThrow(() -> new RuntimeException("Trattativa non trovata"));
 		
-		if (!trattativa.getStato().equals(StatoTrattativa.ACCETTATA)) {
-			throw new Exception("Errore, la trattativa non è stata ancora accettata");
-		}
-		
 		Annuncio annuncio = annuncioRepository.findById(trattativa.getAnnuncio().getIdAnnuncio())
 				.orElseThrow(() -> new RuntimeException("Annuncio corrispondente non trovato"));
+		
+		if (trattativa.getStato().equals(StatoTrattativa.CONCLUSA)) {
+			throw new Exception("Non puoi accettare una trattativa già conclusa");
+		}
+		
+		if (!trattativa.getStato().equals(StatoTrattativa.IN_ATTESA)) {
+			throw new Exception("La trattativa non è in stato di attesa e non può essere accettata");
+		}
+		
+		String emailUtenteLog = SecurityContextHolder.getContext().getAuthentication().getName();
+        Utente utenteLog = utenteRepository.findByEmail(emailUtenteLog)
+            .orElseThrow(() -> new Exception("Utente non trovato"));
 		
 		Utente venditore = annuncio.getVenditore();
 		
 		Utente acquirente = trattativa.getUtente();
 		
+		if (venditore.equals(acquirente)) {
+		    throw new Exception("Il venditore e l'acquirente non possono essere la stessa persona");
+		}
+		
 		Immobile immobileVenduto = annuncio.getImmobile();
+		
+		if (!immobileVenduto.getStato().equals(StatoImmobile.DISPONIBILE)) {
+			throw new Exception("L'immobile non è più disponibile");
+		}
+		
+		if (!annuncio.getCreatore().equals(utenteLog)) {
+        	throw new Exception("Non puoi gestire trattative di annunci che non sono tuoi");
+        }
+		
+		if (!immobileVenduto.getProprietario().equals(venditore)) {
+			throw new Exception("L'immobile non è posseduto dal venditore");
+		}
 		
 		venditore.rimuoviImmobile(immobileVenduto);
 		
 		acquirente.aggiungiImmobile(immobileVenduto);
 		
 		trattativa.setStato(StatoTrattativa.CONCLUSA);
+		
+		immobileVenduto.setStato(StatoImmobile.VENDUTO);
 		
 		annuncio.setVisibile(false);
 		

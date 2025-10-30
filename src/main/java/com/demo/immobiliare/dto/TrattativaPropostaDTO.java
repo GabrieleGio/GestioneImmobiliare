@@ -2,10 +2,19 @@ package com.demo.immobiliare.dto;
 
 import java.math.BigDecimal;
 
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 public class TrattativaPropostaDTO {
 
     private Long idAnnuncio;
+    
+    @NotNull(message = "Prezzo offerto non valido")
+    @DecimalMin(value = "0.01", message = "Il prezzo deve essere maggiore di zero")
     private BigDecimal prezzoOfferto;
+    
+    @Size(max = 500, message = "Il messaggio non può superare i 500 caratteri")
     private String messaggio;
 
     public TrattativaPropostaDTO() {}

@@ -4,6 +4,8 @@ import com.demo.immobiliare.dto.ImmobileDTO;
 import com.demo.immobiliare.dto.ImmobilePersonaleDTO;
 import com.demo.immobiliare.service.IImmobileService;
 
+import jakarta.validation.Valid;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -56,13 +58,13 @@ public class ImmobileController {
     }
 
     @PostMapping
-    public ResponseEntity<?> creaImmobile(@RequestBody ImmobileDTO immobileDTO) throws Exception {
+    public ResponseEntity<?> creaImmobile(@Valid @RequestBody ImmobileDTO immobileDTO) throws Exception {
         ImmobileDTO creato = immobileService.creaImmobile(immobileDTO);
         return new ResponseEntity<>(creato, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> aggiornaImmobile(@PathVariable Long id, @RequestBody ImmobileDTO immobileDTO) {
+    public ResponseEntity<?> aggiornaImmobile(@PathVariable Long id, @Valid @RequestBody ImmobileDTO immobileDTO) {
         try {
             immobileDTO.setIdImmobile(id);
             ImmobileDTO aggiornato = immobileService.aggiornaImmobile(immobileDTO);

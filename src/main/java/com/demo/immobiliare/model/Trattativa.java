@@ -38,6 +38,7 @@ public class Trattativa {
 
     @Column(name = "messaggio", length = 500)
     @Size(max = 500, message = "Il messaggio non può superare i 500 caratteri")
+    @NotBlank
     private String messaggio;
     
     public Trattativa() {}

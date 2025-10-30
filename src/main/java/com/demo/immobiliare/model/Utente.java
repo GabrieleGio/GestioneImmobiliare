@@ -13,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -29,14 +30,11 @@ public class Utente {
 	private String username;
 	
 	@Column(name = "email", nullable = false, unique = true)
-	@Pattern(
-	        regexp = "^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$", 
-	        message = "Email non valida"
-	    )
+	@Email
 	private String email;
 	
 	@Column(name = "password", nullable = false)
-	@Size(min = 8, message = "La password deve essere composta da minimo 5 caratteri")
+	@Size(min = 8, max = 255, message = "La password deve essere composta da minimo 5 caratteri e massimo 255")
 	private String password;
 	
 	@Column(name = "ruolo", nullable = false)

@@ -2,6 +2,8 @@ package com.demo.immobiliare.service.impl;
 
 import com.demo.immobiliare.dto.ImmobileDTO;
 import com.demo.immobiliare.dto.ImmobilePersonaleDTO;
+import com.demo.immobiliare.exception.ImmobileOwnershipException;
+import com.demo.immobiliare.exception.UserNotFoundException;
 import com.demo.immobiliare.mapper.ImmobileMapper;
 import com.demo.immobiliare.model.Immobile;
 import com.demo.immobiliare.model.Utente;
@@ -32,10 +34,10 @@ public class ImmobileService implements IImmobileService {
     }
 
     @Override
-    public ImmobileDTO creaImmobile(ImmobileDTO immobileDTO) throws Exception {
+    public ImmobileDTO creaImmobile(ImmobileDTO immobileDTO) {
     	String email = SecurityContextHolder.getContext().getAuthentication().getName();
     	Utente proprietario = utenteRepository.findByEmail(email)
-    	    .orElseThrow(() -> new Exception("Utente non trovato"));
+    	    .orElseThrow(() -> new UserNotFoundException("Utente non trovato"));
 
 
         Immobile immobile = ImmobileMapper.toEntity(immobileDTO);
@@ -47,16 +49,16 @@ public class ImmobileService implements IImmobileService {
 
 
     @Override
-    public ImmobileDTO aggiornaImmobile(ImmobileDTO immobileDTO) throws Exception {
+    public ImmobileDTO aggiornaImmobile(ImmobileDTO immobileDTO) {
         Immobile immobileEsistente = immobileRepository.findById(immobileDTO.getIdImmobile())
-            .orElseThrow(() -> new Exception("Immobile con ID " + immobileDTO.getIdImmobile() + " non trovato"));
+            .orElseThrow(() -> new ImmobileNotFoundException("Immobile con ID " + immobileDTO.getIdImmobile() + " non trovato"));
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Utente proprietario = utenteRepository.findByEmail(email)
-            .orElseThrow(() -> new Exception("Utente non trovato"));
+            .orElseThrow(() -> new UserNotFoundException("Utente non trovato"));
 
         if (!immobileEsistente.getProprietario().getIdUtente().equals(proprietario.getIdUtente())) {
-            throw new Exception("Non puoi modificare un immobile che non ti appartiene");
+            throw new ImmobileOwnershipException("Non puoi modificare un immobile che non ti appartiene");
         }
 
         immobileEsistente.setIndirizzo(immobileDTO.getIndirizzo());
@@ -70,9 +72,9 @@ public class ImmobileService implements IImmobileService {
 
 
     @Override
-    public void eliminaImmobile(Long id) throws Exception {
+    public void eliminaImmobile(Long id) {
         if (!immobileRepository.existsById(id)) {
-            throw new Exception("Immobile con ID " + id + " non trovato");
+            throw new ImmobileNotFoundException("Immobile con ID " + id + " non trovato");
         }
         immobileRepository.deleteById(id);
     }
@@ -97,10 +99,10 @@ public class ImmobileService implements IImmobileService {
 //                .map(ImmobileMapper::toDto);
 //    }
     
-    public Page<ImmobilePersonaleDTO> trovaTuttiPersonaliPaginati(Pageable pageable) throws Exception {
+    public Page<ImmobilePersonaleDTO> trovaTuttiPersonaliPaginati(Pageable pageable) {
     	String emailUtenteLog = SecurityContextHolder.getContext().getAuthentication().getName();
         Utente utenteLog = utenteRepository.findByEmail(emailUtenteLog)
-            .orElseThrow(() -> new Exception("Utente non trovato"));
+            .orElseThrow(() -> new UserNotFoundException("Utente non trovato"));
         
         return immobileRepository.findAllByProprietario_IdUtente(utenteLog.getIdUtente(), pageable)
                 .map(immobile -> new ImmobilePersonaleDTO(

@@ -11,11 +11,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface IAnnuncioService {
-    AnnuncioDTO creaAnnuncio(AnnuncioDTO annuncioDTO) throws Exception;
-    AnnuncioDTO aggiornaAnnuncio(AnnuncioDTO annuncioDTO) throws Exception;
-    void eliminaAnnuncio(Long id) throws Exception;
+    AnnuncioDTO creaAnnuncio(AnnuncioDTO annuncioDTO);
+    AnnuncioDTO aggiornaAnnuncio(AnnuncioDTO annuncioDTO);
+    void eliminaAnnuncio(Long id);
     Optional<AnnuncioDTO> trovaPerId(Long id);
     List<AnnuncioDTO> trovaTutti();
     Page<AnnuncioHomeDTO> trovaTuttiPaginati(Pageable pageable);
-    Page<AnnuncioPersonaleDTO> trovaTuttiPersonaliPaginati(Pageable pageable) throws Exception;
+    Page<AnnuncioPersonaleDTO> trovaTuttiPersonaliPaginati(Pageable pageable);
 }

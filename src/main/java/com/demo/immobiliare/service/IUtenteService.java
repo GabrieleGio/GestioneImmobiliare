@@ -10,8 +10,8 @@ import com.demo.immobiliare.dto.RegisterDTO;
 import com.demo.immobiliare.dto.UtenteDTO;
 
 public interface IUtenteService {
-    UtenteDTO registraUtente(RegisterDTO utente) throws Exception;
-    UtenteDTO aggiornaUtente(UtenteDTO utente) throws Exception;
+    UtenteDTO registraUtente(RegisterDTO utente);
+    UtenteDTO aggiornaUtente(UtenteDTO utente);
     Optional<UtenteDTO> trovaPerId(Long idUtente);
     Optional<UtenteDTO> trovaPerUsername(String username);
     Optional<UtenteDTO> trovaPerEmail(String email);

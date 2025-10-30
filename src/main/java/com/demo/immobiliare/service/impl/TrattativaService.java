@@ -3,6 +3,14 @@ package com.demo.immobiliare.service.impl;
 import com.demo.immobiliare.dto.TrattativaDTO;
 import com.demo.immobiliare.dto.TrattativaPersonaleDTO;
 import com.demo.immobiliare.dto.TrattativaPropostaDTO;
+import com.demo.immobiliare.exception.AnnuncioNotFoundException;
+import com.demo.immobiliare.exception.AnnuncioOwnershipException;
+import com.demo.immobiliare.exception.ImmobileOwnershipException;
+import com.demo.immobiliare.exception.InvalidImmobileStateException;
+import com.demo.immobiliare.exception.InvalidTrattativaStateException;
+import com.demo.immobiliare.exception.SameUserTrattativaException;
+import com.demo.immobiliare.exception.TrattativaNotFoundException;
+import com.demo.immobiliare.exception.UserNotFoundException;
 import com.demo.immobiliare.mapper.TrattativaMapper;
 import com.demo.immobiliare.model.Annuncio;
 import com.demo.immobiliare.model.Immobile;
@@ -46,14 +54,14 @@ public class TrattativaService implements ITrattativaService {
         this.immobileRepository = immobileRepository;
     }
 
-    public TrattativaDTO creaTrattativa(TrattativaPropostaDTO propostaDTO) throws Exception {
+    public TrattativaDTO creaTrattativa(TrattativaPropostaDTO propostaDTO) {
     	
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Utente utente = utenteRepository.findByEmail(email)
-            .orElseThrow(() -> new Exception("Utente non trovato"));
+            .orElseThrow(() -> new UserNotFoundException("Utente non trovato"));
 
         Annuncio annuncio = annuncioRepository.findById(propostaDTO.getIdAnnuncio())
-            .orElseThrow(() -> new Exception("Annuncio non trovato"));
+            .orElseThrow(() -> new AnnuncioNotFoundException("Annuncio non trovato"));
 
         Trattativa trattativa = new Trattativa();
         trattativa.setUtente(utente);
@@ -71,17 +79,17 @@ public class TrattativaService implements ITrattativaService {
 
 
     @Override
-    public TrattativaDTO aggiornaTrattativa(TrattativaDTO dto) throws Exception {
+    public TrattativaDTO aggiornaTrattativa(TrattativaDTO dto) {
         
     	Trattativa esistente = trattativaRepository.findById(dto.getIdTrattativa())
-            .orElseThrow(() -> new Exception("Trattativa con ID " + dto.getIdTrattativa() + " non trovata"));
+            .orElseThrow(() -> new TrattativaNotFoundException("Trattativa con ID " + dto.getIdTrattativa() + " non trovata"));
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Utente utente = utenteRepository.findByEmail(email)
-            .orElseThrow(() -> new Exception("Utente non trovato"));
+            .orElseThrow(() -> new UserNotFoundException("Utente non trovato"));
 
         Annuncio annuncio = annuncioRepository.findById(dto.getIdAnnuncio())
-            .orElseThrow(() -> new Exception("Annuncio non trovato"));
+            .orElseThrow(() -> new AnnuncioNotFoundException("Annuncio non trovato"));
 
         Trattativa aggiornata = TrattativaMapper.toEntity(dto);
 
@@ -100,9 +108,9 @@ public class TrattativaService implements ITrattativaService {
 
 
     @Override
-    public void eliminaTrattativa(Long id) throws Exception {
+    public void eliminaTrattativa(Long id) {
         if (!trattativaRepository.existsById(id)) {
-            throw new Exception("Trattativa con ID " + id + " non trovata");
+            throw new TrattativaNotFoundException("Trattativa con ID " + id + " non trovata");
         }
         trattativaRepository.deleteById(id);
     }
@@ -128,10 +136,10 @@ public class TrattativaService implements ITrattativaService {
     }
     
     @Override
-    public Page<TrattativaPersonaleDTO> trovaTuttiPersonaliPaginati(Pageable pageable) throws Exception {
+    public Page<TrattativaPersonaleDTO> trovaTuttiPersonaliPaginati(Pageable pageable) {
     	String emailUtenteLog = SecurityContextHolder.getContext().getAuthentication().getName();
         Utente utenteLog = utenteRepository.findByEmail(emailUtenteLog)
-            .orElseThrow(() -> new Exception("Utente non trovato"));
+            .orElseThrow(() -> new UserNotFoundException("Utente non trovato"));
         
         return trattativaRepository.findAllByUtente_IdUtente(utenteLog.getIdUtente(), pageable)
         		.map(trattativa -> new TrattativaPersonaleDTO(
@@ -145,16 +153,16 @@ public class TrattativaService implements ITrattativaService {
     }
     
     @Override
-    public Page<TrattativaDTO> trovaTuttiPerAnnuncioPersonale(Long idAnnuncio, Pageable pageable) throws Exception {
+    public Page<TrattativaDTO> trovaTuttiPerAnnuncioPersonale(Long idAnnuncio, Pageable pageable) {
     	String emailUtenteLog = SecurityContextHolder.getContext().getAuthentication().getName();
         Utente utenteLog = utenteRepository.findByEmail(emailUtenteLog)
-            .orElseThrow(() -> new Exception("Utente non trovato"));
+            .orElseThrow(() -> new UserNotFoundException("Utente non trovato"));
         
         Annuncio annuncio = annuncioRepository.findById(idAnnuncio)
-        		.orElseThrow(() -> new Exception("Annuncio non trovato"));
+        		.orElseThrow(() -> new AnnuncioNotFoundException("Annuncio non trovato"));
         
         if (!annuncio.getCreatore().equals(utenteLog)) {
-        	throw new Exception("Non puoi visualizzare trattative di annunci che non sono tuoi");
+        	throw new AnnuncioOwnershipException("Non puoi visualizzare trattative di annunci che non sono tuoi");
         }
         
         return trattativaRepository.findAllByAnnuncio_IdAnnuncio(idAnnuncio, pageable)
@@ -172,46 +180,46 @@ public class TrattativaService implements ITrattativaService {
 
 	@Override
 	@Transactional
-	public void vendi(Long idTrattativa) throws Exception {
+	public void vendi(Long idTrattativa) {
 		
 		Trattativa trattativa = trattativaRepository.findById(idTrattativa)
-			    .orElseThrow(() -> new RuntimeException("Trattativa non trovata"));
+			    .orElseThrow(() -> new TrattativaNotFoundException("Trattativa non trovata"));
 		
 		Annuncio annuncio = annuncioRepository.findById(trattativa.getAnnuncio().getIdAnnuncio())
-				.orElseThrow(() -> new RuntimeException("Annuncio corrispondente non trovato"));
+				.orElseThrow(() -> new AnnuncioNotFoundException("Annuncio corrispondente non trovato"));
 		
 		if (trattativa.getStato().equals(StatoTrattativa.CONCLUSA)) {
-			throw new Exception("Non puoi accettare una trattativa già conclusa");
+			throw new InvalidTrattativaStateException("Non puoi accettare una trattativa già conclusa");
 		}
 		
 		if (!trattativa.getStato().equals(StatoTrattativa.IN_ATTESA)) {
-			throw new Exception("La trattativa non è in stato di attesa e non può essere accettata");
+			throw new InvalidTrattativaStateException("La trattativa non è in stato di attesa e non può essere accettata");
 		}
 		
 		String emailUtenteLog = SecurityContextHolder.getContext().getAuthentication().getName();
         Utente utenteLog = utenteRepository.findByEmail(emailUtenteLog)
-            .orElseThrow(() -> new Exception("Utente non trovato"));
+            .orElseThrow(() -> new UserNotFoundException("Utente non trovato"));
 		
 		Utente venditore = annuncio.getVenditore();
 		
 		Utente acquirente = trattativa.getUtente();
 		
 		if (venditore.equals(acquirente)) {
-		    throw new Exception("Il venditore e l'acquirente non possono essere la stessa persona");
+		    throw new SameUserTrattativaException("Il venditore e l'acquirente non possono essere la stessa persona");
 		}
 		
 		Immobile immobileVenduto = annuncio.getImmobile();
 		
 		if (!immobileVenduto.getStato().equals(StatoImmobile.DISPONIBILE)) {
-			throw new Exception("L'immobile non è più disponibile");
+			throw new InvalidImmobileStateException("L'immobile non è più disponibile");
 		}
 		
 		if (!annuncio.getCreatore().equals(utenteLog)) {
-        	throw new Exception("Non puoi gestire trattative di annunci che non sono tuoi");
+        	throw new AnnuncioOwnershipException("Non puoi gestire trattative di annunci che non sono tuoi");
         }
 		
 		if (!immobileVenduto.getProprietario().equals(venditore)) {
-			throw new Exception("L'immobile non è posseduto dal venditore");
+			throw new ImmobileOwnershipException("L'immobile non è posseduto dal venditore");
 		}
 		
 		venditore.rimuoviImmobile(immobileVenduto);

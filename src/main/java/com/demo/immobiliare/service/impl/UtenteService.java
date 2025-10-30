@@ -11,6 +11,10 @@ import org.springframework.stereotype.Service;
 
 import com.demo.immobiliare.dto.RegisterDTO;
 import com.demo.immobiliare.dto.UtenteDTO;
+import com.demo.immobiliare.exception.EmailAlreadyInUseException;
+import com.demo.immobiliare.exception.PasswordMismatchException;
+import com.demo.immobiliare.exception.UserNotFoundException;
+import com.demo.immobiliare.exception.UsernameAlreadyInUseException;
 import com.demo.immobiliare.mapper.UtenteMapper;
 import com.demo.immobiliare.model.Utente;
 import com.demo.immobiliare.repository.UtenteRepository;
@@ -31,17 +35,17 @@ public class UtenteService implements IUtenteService {
     }
 
     @Override
-    public UtenteDTO registraUtente(RegisterDTO registerDTO) throws Exception {
+    public UtenteDTO registraUtente(RegisterDTO registerDTO) {
         if (utenteRepository.existsByUsername(registerDTO.getUsername())) {
-            throw new Exception("Username già in uso");
+            throw new UsernameAlreadyInUseException("Username già in uso");
         }
 
         if (utenteRepository.existsByEmail(registerDTO.getEmail())) {
-            throw new Exception("Email già in uso");
+            throw new EmailAlreadyInUseException("Email già in uso");
         }
 
         if (!registerDTO.getPassword().equals(registerDTO.getConfirmPassword())) {
-            throw new Exception("Le password non coincidono");
+            throw new PasswordMismatchException("Le password non coincidono");
         }
         
         String passwordCriptata = passwordEncoder.encode(registerDTO.getPassword());
@@ -52,22 +56,22 @@ public class UtenteService implements IUtenteService {
 
 
     @Override
-    public UtenteDTO aggiornaUtente(UtenteDTO utenteDTO) throws Exception {
+    public UtenteDTO aggiornaUtente(UtenteDTO utenteDTO) {
         Optional<Utente> utenteEsistenteOpt = utenteRepository.findById(utenteDTO.getIdUtente());
         if (utenteEsistenteOpt.isEmpty()) {
-            throw new Exception("Utente non trovato");
+            throw new UserNotFoundException("Utente non trovato");
         }
 
         Utente utenteEsistente = utenteEsistenteOpt.get();
 
         if (!utenteEsistente.getUsername().equals(utenteDTO.getUsername()) &&
             utenteRepository.existsByUsername(utenteDTO.getUsername())) {
-            throw new Exception("Username già in uso");
+            throw new UsernameAlreadyInUseException("Username già in uso");
         }
 
         if (!utenteEsistente.getEmail().equals(utenteDTO.getEmail()) &&
             utenteRepository.existsByEmail(utenteDTO.getEmail())) {
-            throw new Exception("Email già in uso");
+            throw new EmailAlreadyInUseException("Email già in uso");
         }
 
         utenteEsistente.setUsername(utenteDTO.getUsername());

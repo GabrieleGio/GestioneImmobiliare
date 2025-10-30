@@ -11,13 +11,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface ITrattativaService {
-    TrattativaDTO creaTrattativa(TrattativaPropostaDTO trattativaPropostaDTO) throws Exception;
-    TrattativaDTO aggiornaTrattativa(TrattativaDTO trattativaDTO) throws Exception;
-    void eliminaTrattativa(Long id) throws Exception;
+    TrattativaDTO creaTrattativa(TrattativaPropostaDTO trattativaPropostaDTO);
+    TrattativaDTO aggiornaTrattativa(TrattativaDTO trattativaDTO);
+    void eliminaTrattativa(Long id);
     Optional<TrattativaDTO> trovaPerId(Long id);
     List<TrattativaDTO> trovaTutti();
     Page<TrattativaDTO> trovaTuttiPaginati(Pageable pageable);
-    Page<TrattativaPersonaleDTO> trovaTuttiPersonaliPaginati(Pageable pageable) throws Exception;
-    Page<TrattativaDTO> trovaTuttiPerAnnuncioPersonale(Long idAnnuncio, Pageable pageable) throws Exception;
-    void vendi(Long id) throws Exception;;
+    Page<TrattativaPersonaleDTO> trovaTuttiPersonaliPaginati(Pageable pageable);
+    Page<TrattativaDTO> trovaTuttiPerAnnuncioPersonale(Long idAnnuncio, Pageable pageable);
+    void vendi(Long id);
 }

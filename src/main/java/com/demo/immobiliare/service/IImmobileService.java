@@ -9,10 +9,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface IImmobileService {
-    ImmobileDTO creaImmobile(ImmobileDTO immobileDTO) throws Exception;
-    ImmobileDTO aggiornaImmobile(ImmobileDTO immobileDTO) throws Exception;
-    void eliminaImmobile(Long id) throws Exception;
+    ImmobileDTO creaImmobile(ImmobileDTO immobileDTO);
+    ImmobileDTO aggiornaImmobile(ImmobileDTO immobileDTO);
+    void eliminaImmobile(Long id);
     Optional<ImmobileDTO> trovaPerId(Long id);
     List<ImmobileDTO> trovaTutti();
-    Page<ImmobilePersonaleDTO> trovaTuttiPersonaliPaginati(Pageable pageable) throws Exception;
+    Page<ImmobilePersonaleDTO> trovaTuttiPersonaliPaginati(Pageable pageable);
     }

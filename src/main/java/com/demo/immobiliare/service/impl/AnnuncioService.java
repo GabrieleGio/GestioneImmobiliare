@@ -3,6 +3,11 @@ package com.demo.immobiliare.service.impl;
 import com.demo.immobiliare.dto.AnnuncioDTO;
 import com.demo.immobiliare.dto.AnnuncioHomeDTO;
 import com.demo.immobiliare.dto.AnnuncioPersonaleDTO;
+import com.demo.immobiliare.exception.AnnuncioNotFoundException;
+import com.demo.immobiliare.exception.AnnuncioOwnershipException;
+import com.demo.immobiliare.exception.ImmobileAlreadySoldException;
+import com.demo.immobiliare.exception.ImmobileOwnershipException;
+import com.demo.immobiliare.exception.UserNotFoundException;
 import com.demo.immobiliare.mapper.AnnuncioMapper;
 import com.demo.immobiliare.model.Annuncio;
 import com.demo.immobiliare.model.Immobile;
@@ -38,20 +43,20 @@ public class AnnuncioService implements IAnnuncioService {
     }
 
     @Override
-    public AnnuncioDTO creaAnnuncio(AnnuncioDTO annuncioDTO) throws Exception {
+    public AnnuncioDTO creaAnnuncio(AnnuncioDTO annuncioDTO) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Utente utente = utenteRepository.findByEmail(email)
-                .orElseThrow(() -> new Exception("Utente non trovato"));
+                .orElseThrow(() -> new UserNotFoundException("Utente non trovato"));
 
         Immobile immobile = immobileRepository.findById(annuncioDTO.getIdImmobile())
-                .orElseThrow(() -> new Exception("Immobile non trovato"));
+                .orElseThrow(() -> new ImmobileNotFoundException("Immobile non trovato"));
 
         if (!immobile.getProprietario().getIdUtente().equals(utente.getIdUtente())) {
-            throw new Exception("Non puoi creare un annuncio per un immobile che non possiedi");
+            throw new ImmobileOwnershipException("Non puoi creare un annuncio per un immobile che non possiedi");
         }
         
         if (immobile.getStato().equals(StatoImmobile.VENDUTO)) {
-        	throw new Exception("Non puoi mettere un annuncio per un immobile venduto");
+        	throw new ImmobileAlreadySoldException("Non puoi mettere un annuncio per un immobile venduto");
         }
         
         Annuncio annuncio = AnnuncioMapper.toEntity(annuncioDTO);
@@ -63,23 +68,23 @@ public class AnnuncioService implements IAnnuncioService {
     }
 
     @Override
-    public AnnuncioDTO aggiornaAnnuncio(AnnuncioDTO annuncioDTO) throws Exception {
+    public AnnuncioDTO aggiornaAnnuncio(AnnuncioDTO annuncioDTO) {
         Annuncio annuncioEsistente = annuncioRepository.findById(annuncioDTO.getIdAnnuncio())
-                .orElseThrow(() -> new Exception("Annuncio con ID " + annuncioDTO.getIdAnnuncio() + " non trovato"));
+                .orElseThrow(() -> new AnnuncioNotFoundException("Annuncio con ID " + annuncioDTO.getIdAnnuncio() + " non trovato"));
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Utente utente = utenteRepository.findByEmail(email)
-                .orElseThrow(() -> new Exception("Utente non trovato"));
+                .orElseThrow(() -> new UserNotFoundException("Utente non trovato"));
 
         Immobile immobile = immobileRepository.findById(annuncioDTO.getIdImmobile())
-                .orElseThrow(() -> new Exception("Immobile non trovato"));
+                .orElseThrow(() -> new ImmobileNotFoundException("Immobile non trovato"));
 
         if (!immobile.getProprietario().getIdUtente().equals(utente.getIdUtente())) {
-            throw new Exception("Non puoi modificare un annuncio per un immobile che non possiedi");
+            throw new ImmobileOwnershipException("Non puoi modificare un annuncio per un immobile che non possiedi");
         }
 
         if (!annuncioEsistente.getCreatore().getIdUtente().equals(utente.getIdUtente())) {
-            throw new Exception("Non puoi modificare un annuncio che non hai creato");
+            throw new AnnuncioOwnershipException("Non puoi modificare un annuncio che non hai creato");
         }
 
         annuncioEsistente.setVisibile(annuncioDTO.isVisibile());
@@ -90,9 +95,9 @@ public class AnnuncioService implements IAnnuncioService {
     }
 
     @Override
-    public void eliminaAnnuncio(Long id) throws Exception {
+    public void eliminaAnnuncio(Long id) {
         if (!annuncioRepository.existsById(id)) {
-            throw new Exception("Annuncio con ID " + id + " non trovato");
+            throw new AnnuncioNotFoundException("Annuncio con ID " + id + " non trovato");
         }
         annuncioRepository.deleteById(id);
     }
@@ -137,10 +142,10 @@ public class AnnuncioService implements IAnnuncioService {
     }
     
     @Override
-    public Page<AnnuncioPersonaleDTO> trovaTuttiPersonaliPaginati(Pageable pageable) throws Exception {
+    public Page<AnnuncioPersonaleDTO> trovaTuttiPersonaliPaginati(Pageable pageable) {
     	String emailUtenteLog = SecurityContextHolder.getContext().getAuthentication().getName();
         Utente utenteLog = utenteRepository.findByEmail(emailUtenteLog)
-            .orElseThrow(() -> new Exception("Utente non trovato"));
+            .orElseThrow(() -> new UserNotFoundException("Utente non trovato"));
         
         return annuncioRepository.findAllByCreatore_IdUtente(utenteLog.getIdUtente(), pageable)
         		.map(annuncio -> {

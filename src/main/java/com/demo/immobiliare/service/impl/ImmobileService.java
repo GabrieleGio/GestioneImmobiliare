@@ -2,6 +2,7 @@ package com.demo.immobiliare.service.impl;
 
 import com.demo.immobiliare.dto.ImmobileDTO;
 import com.demo.immobiliare.dto.ImmobilePersonaleDTO;
+import com.demo.immobiliare.exception.ImmobileNotFoundException;
 import com.demo.immobiliare.exception.ImmobileOwnershipException;
 import com.demo.immobiliare.exception.UserNotFoundException;
 import com.demo.immobiliare.mapper.ImmobileMapper;
@@ -70,7 +71,6 @@ public class ImmobileService implements IImmobileService {
         return ImmobileMapper.toDto(updated);
     }
 
-
     @Override
     public void eliminaImmobile(Long id) {
         if (!immobileRepository.existsById(id)) {
@@ -81,23 +81,22 @@ public class ImmobileService implements IImmobileService {
 
     @Override
     public Optional<ImmobileDTO> trovaPerId(Long id) {
-        return immobileRepository.findById(id)
-                .map(ImmobileMapper::toDto);
-    }
+    	Immobile immobile = immobileRepository.findById(id)
+    	        .orElseThrow(() -> new ImmobileNotFoundException("Immobile con ID " + id + " non trovato"));
 
-    @Override
-    public List<ImmobileDTO> trovaTutti() {
-        return immobileRepository.findAll()
-                .stream()
-                .map(ImmobileMapper::toDto)
-                .collect(Collectors.toList());
+    	return Optional.of(ImmobileMapper.toDto(immobile));
     }
     
-//    @Override
-//    public Page<ImmobileDTO> trovaTuttiPaginati(Pageable pageable) {
-//        return immobileRepository.findAll(pageable)
-//                .map(ImmobileMapper::toDto);
-//    }
+	@Override
+	public List<ImmobileDTO> trovaTutti() {
+		    List<Immobile> immobili = immobileRepository.findAll();
+		    if (immobili.isEmpty()) {
+		        throw new ImmobileNotFoundException("Nessun immobile trovato");
+		    }
+		    return immobili.stream()
+		                   .map(ImmobileMapper::toDto)
+		                   .collect(Collectors.toList());
+	}
     
     public Page<ImmobilePersonaleDTO> trovaTuttiPersonaliPaginati(Pageable pageable) {
     	String emailUtenteLog = SecurityContextHolder.getContext().getAuthentication().getName();

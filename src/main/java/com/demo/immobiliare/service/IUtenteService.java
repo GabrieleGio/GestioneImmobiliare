@@ -19,5 +19,5 @@ public interface IUtenteService {
     Page<UtenteDTO> trovaTuttiPaginati(Pageable pageable);
     boolean esisteUsername(String username);
     boolean esisteEmail(String email);
-    boolean verificaPassword(String username, String rawPassword) throws Exception;
+    boolean verificaPassword(String username, String rawPassword);
 }

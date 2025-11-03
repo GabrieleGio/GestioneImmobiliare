@@ -6,6 +6,7 @@ import com.demo.immobiliare.dto.AnnuncioPersonaleDTO;
 import com.demo.immobiliare.exception.AnnuncioNotFoundException;
 import com.demo.immobiliare.exception.AnnuncioOwnershipException;
 import com.demo.immobiliare.exception.ImmobileAlreadySoldException;
+import com.demo.immobiliare.exception.ImmobileNotFoundException;
 import com.demo.immobiliare.exception.ImmobileOwnershipException;
 import com.demo.immobiliare.exception.UserNotFoundException;
 import com.demo.immobiliare.mapper.AnnuncioMapper;
@@ -104,23 +105,22 @@ public class AnnuncioService implements IAnnuncioService {
 
     @Override
     public Optional<AnnuncioDTO> trovaPerId(Long id) {
-        return annuncioRepository.findById(id)
-                .map(AnnuncioMapper::toDto);
+    	Annuncio annuncio = annuncioRepository.findById(id)
+    	        .orElseThrow(() -> new AnnuncioNotFoundException("Annuncio con ID " + id + " non trovato"));
+
+    	return Optional.of(AnnuncioMapper.toDto(annuncio));
     }
 
     @Override
     public List<AnnuncioDTO> trovaTutti() {
-        return annuncioRepository.findAll()
-                .stream()
-                .map(AnnuncioMapper::toDto)
-                .collect(Collectors.toList());
+    	List<Annuncio> annunci = annuncioRepository.findAll();
+	    if (annunci.isEmpty()) {
+	        throw new AnnuncioNotFoundException("Nessun annuncio trovato");
+	    }
+	    return annunci.stream()
+	                   .map(AnnuncioMapper::toDto)
+	                   .collect(Collectors.toList());
     }
-    
-//    @Override
-//    public Page<AnnuncioDTO> trovaTuttiPaginati(Pageable pageable) {
-//        return annuncioRepository.findAll(pageable)
-//                .map(AnnuncioMapper::toDto);
-//    }
     
     @Override
     public Page<AnnuncioHomeDTO> trovaTuttiPaginati(Pageable pageable) {

@@ -32,7 +32,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
 
         // Ignoro il filtro JWT per i percorsi pubblici
-        if (path.equals("/utenti/register") || path.equals("/utenti/login")) {
+        if (path.equals("/utenti/register") || path.equals("/auth/login")) {
             filterChain.doFilter(request, response);
             return;
         }

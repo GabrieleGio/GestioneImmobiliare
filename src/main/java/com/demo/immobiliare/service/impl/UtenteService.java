@@ -54,7 +54,6 @@ public class UtenteService implements IUtenteService {
         return UtenteMapper.toDto(saved);
     }
 
-
     @Override
     public UtenteDTO aggiornaUtente(UtenteDTO utenteDTO) {
         Optional<Utente> utenteEsistenteOpt = utenteRepository.findById(utenteDTO.getIdUtente());
@@ -68,7 +67,7 @@ public class UtenteService implements IUtenteService {
             utenteRepository.existsByUsername(utenteDTO.getUsername())) {
             throw new UsernameAlreadyInUseException("Username già in uso");
         }
-
+        
         if (!utenteEsistente.getEmail().equals(utenteDTO.getEmail()) &&
             utenteRepository.existsByEmail(utenteDTO.getEmail())) {
             throw new EmailAlreadyInUseException("Email già in uso");
@@ -85,28 +84,37 @@ public class UtenteService implements IUtenteService {
 
     @Override
     public Optional<UtenteDTO> trovaPerId(Long idUtente) {
-        return utenteRepository.findById(idUtente)
-                .map(UtenteMapper::toDto);
+    	Utente utente = utenteRepository.findById(idUtente)
+    	        .orElseThrow(() -> new UserNotFoundException("Utente con ID " + idUtente + " non trovato"));
+
+    	return Optional.of(UtenteMapper.toDto(utente));
     }
 
     @Override
     public Optional<UtenteDTO> trovaPerUsername(String username) {
-        return utenteRepository.findByUsername(username)
-                .map(UtenteMapper::toDto);
+    	Utente utente = utenteRepository.findByUsername(username)
+    	        .orElseThrow(() -> new UserNotFoundException("Utente con username " + username + " non trovato"));
+
+    	return Optional.of(UtenteMapper.toDto(utente));
     }
     
     @Override
     public Optional<UtenteDTO> trovaPerEmail(String email){
-    	return utenteRepository.findByEmail(email)
-                .map(UtenteMapper::toDto);
+    	Utente utente = utenteRepository.findByEmail(email)
+    	        .orElseThrow(() -> new UserNotFoundException("Utente con email " + email + " non trovato"));
+
+    	return Optional.of(UtenteMapper.toDto(utente));
     }
 
     @Override
     public List<UtenteDTO> trovaTutti() {
-        return utenteRepository.findAll()
-                .stream()
-                .map(UtenteMapper::toDto)
-                .collect(Collectors.toList());
+    	List<Utente> utenti = utenteRepository.findAll();
+	    if (utenti.isEmpty()) {
+	        throw new UserNotFoundException("Nessun utente trovato");
+	    }
+	    return utenti.stream()
+	                   .map(UtenteMapper::toDto)
+	                   .collect(Collectors.toList());
     }
     
     @Override
@@ -126,9 +134,9 @@ public class UtenteService implements IUtenteService {
     }
 
     @Override
-    public boolean verificaPassword(String email, String rawPassword) throws Exception {
+    public boolean verificaPassword(String email, String rawPassword) {
         Utente utente = utenteRepository.findByEmail(email)
-                .orElseThrow(() -> new Exception("Utente non trovato"));
+                .orElseThrow(() -> new UserNotFoundException("Utente non trovato"));
 
         return passwordEncoder.matches(rawPassword, utente.getPassword());
     }

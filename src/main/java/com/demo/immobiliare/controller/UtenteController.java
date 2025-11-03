@@ -11,11 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.demo.immobiliare.dto.AuthResponseDTO;
-import com.demo.immobiliare.dto.LoginDTO;
 import com.demo.immobiliare.dto.RegisterDTO;
 import com.demo.immobiliare.dto.UtenteDTO;
-import com.demo.immobiliare.security.JwtUtil;
 import com.demo.immobiliare.service.IUtenteService;
 
 import jakarta.validation.Valid;
@@ -26,11 +23,9 @@ import jakarta.validation.Valid;
 public class UtenteController {
 
     private final IUtenteService utenteService;
-    private final JwtUtil jwtUtil;
 
-    public UtenteController(IUtenteService utenteService, JwtUtil jwtUtil) {
+    public UtenteController(IUtenteService utenteService) {
         this.utenteService = utenteService;
-        this.jwtUtil = jwtUtil;
     }
 
     @GetMapping
@@ -69,44 +64,6 @@ public class UtenteController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
-    
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginDTO request) {
-        String email = request.getEmail();
-        String password = request.getPassword();
-
-        if (email == null || email.isEmpty() || password == null || password.isEmpty()) {
-            return ResponseEntity.badRequest().body("Email e password sono obbligatori");
-        }
-
-        try {
-            boolean autenticato = utenteService.verificaPassword(email, password);
-
-            if (!autenticato) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Password errata");
-            }
-
-            Optional<UtenteDTO> utenteOpt = utenteService.trovaPerEmail(email);
-
-            if (utenteOpt.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utente non trovato");
-            }
-
-            UtenteDTO utente = utenteOpt.get();
-            
-            String token = jwtUtil.generateToken(utente.getEmail());
-            
-            long expiresIn = jwtUtil.getExpirationTime();
-
-            AuthResponseDTO authResponse = new AuthResponseDTO(token, "Bearer", expiresIn);
-
-            return ResponseEntity.ok().body(authResponse);
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
-    }
-
 
     @PutMapping("/{id}")
     public ResponseEntity<?> aggiornaUtente(@PathVariable Long id, @Valid @RequestBody UtenteDTO utenteDTO) {

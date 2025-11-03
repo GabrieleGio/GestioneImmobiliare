@@ -21,18 +21,6 @@ public class GestioneImmobiliareApplication {
 	// implementare lato front end funzioni per creare immobili e annunci con relativi validators
 	// mettere controlli lato front end di quando un email o username è già in uso
 	
-	// TODO aggiungere controlli con errori custom nelle controller e sistemare 
-	// le service 'trovaPerId', 'trovaTutti', ecc...
+	// TODO aggiungere controlli con errori custom nelle controller
 
-	// mettere questa qua sotto in trovaTutti di ImmobileleService
-	//	@Override
-	//	public List<ImmobileDTO> trovaTutti() {
-	//	    List<Immobile> immobili = immobileRepository.findAll();
-	//	    if (immobili.isEmpty()) {
-	//	        throw new ImmobiliNotFoundException("Nessun immobile trovato");
-	//	    }
-	//	    return immobili.stream()
-	//	                   .map(ImmobileMapper::toDto)
-	//	                   .collect(Collectors.toList());
-	//	}
 

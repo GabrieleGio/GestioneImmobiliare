@@ -117,16 +117,21 @@ public class TrattativaService implements ITrattativaService {
 
     @Override
     public Optional<TrattativaDTO> trovaPerId(Long id) {
-        return trattativaRepository.findById(id)
-                .map(TrattativaMapper::toDto);
+    	Trattativa trattativa = trattativaRepository.findById(id)
+    	        .orElseThrow(() -> new TrattativaNotFoundException("Trattativa con ID " + id + " non trovata"));
+
+    	return Optional.of(TrattativaMapper.toDto(trattativa));
     }
 
     @Override
     public List<TrattativaDTO> trovaTutti() {
-        return trattativaRepository.findAll()
-                .stream()
-                .map(TrattativaMapper::toDto)
-                .collect(Collectors.toList());
+    	List<Trattativa> trattative = trattativaRepository.findAll();
+	    if (trattative.isEmpty()) {
+	        throw new TrattativaNotFoundException("Nessuna trattativa trovata");
+	    }
+	    return trattative.stream()
+	                   .map(TrattativaMapper::toDto)
+	                   .collect(Collectors.toList());
     }
     
     @Override

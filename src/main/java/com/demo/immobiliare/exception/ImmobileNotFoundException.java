@@ -1,4 +1,4 @@
-package com.demo.immobiliare.service.impl;
+package com.demo.immobiliare.exception;
 
 public class ImmobileNotFoundException extends RuntimeException {
 

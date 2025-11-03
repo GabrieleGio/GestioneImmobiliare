@@ -5,8 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.demo.immobiliare.service.impl.ImmobileNotFoundException;
-
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 	
@@ -81,6 +79,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SameUserTrattativaException.class)
     public ResponseEntity<String> handleSameUserTrattativa(SameUserTrattativaException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+    
+    // AUTH
+    
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<String> handleInvalidCredentials(InvalidCredentialsException ex) {
+    	return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
     
     // GENERALE

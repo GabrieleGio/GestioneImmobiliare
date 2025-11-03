@@ -2,14 +2,32 @@ package com.demo.immobiliare.dto;
 
 import java.time.LocalDateTime;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+
 public class AnnuncioDTO {
 
     private Long idAnnuncio;
+    
+    @NotNull(message = "La data di pubblicazione è obbligatoria")
+    @PastOrPresent(message = "La data di pubblicazione non può essere nel futuro")
     private LocalDateTime dataPubblicazione;
+    
+    @NotNull(message = "La visibilità deve essere impostata")
     private boolean visibile;
+    
+    @Min(value = 0, message = "Le visualizzazioni non possono essere negative")
+    @NotNull(message = "Le visualizzazioni sono obbligatorie")
     private int visualizzazioni;
+    
+    @NotNull(message = "L'immobile associato è obbligatorio")
     private Long idImmobile;
+    
+    @NotNull(message = "Il venditore è obbligatorio")
     private Long idVenditore;
+    
+    @NotNull(message = "Il creatore è obbligatorio")
     private Long idCreatore;
 
     public AnnuncioDTO() {}

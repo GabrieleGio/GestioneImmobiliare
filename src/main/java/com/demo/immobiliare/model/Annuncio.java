@@ -16,13 +16,16 @@ public class Annuncio {
 
     @Column(name = "data_pubblicazione", nullable = false)
     @NotNull(message = "La data di pubblicazione è obbligatoria")
+    @PastOrPresent(message = "La data di pubblicazione non può essere nel futuro")
     private LocalDateTime dataPubblicazione = LocalDateTime.now();
 
     @Column(name = "visibile", nullable = false)
+    @NotNull(message = "La visibilità deve essere impostata")
     private boolean visibile = true;
 
     @Column(name = "visualizzazioni", nullable = false)
     @Min(value = 0, message = "Le visualizzazioni non possono essere negative")
+    @NotNull(message = "Le visualizzazioni sono obbligatorie")
     private int visualizzazioni = 0;
 
     @OneToOne

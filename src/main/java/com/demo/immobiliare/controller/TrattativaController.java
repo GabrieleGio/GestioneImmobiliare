@@ -3,6 +3,7 @@ package com.demo.immobiliare.controller;
 import com.demo.immobiliare.dto.TrattativaDTO;
 import com.demo.immobiliare.dto.TrattativaPersonaleDTO;
 import com.demo.immobiliare.dto.TrattativaPropostaDTO;
+import com.demo.immobiliare.dto.TrattativaResponseDTO;
 import com.demo.immobiliare.service.ITrattativaService;
 
 import jakarta.validation.Valid;
@@ -98,13 +99,12 @@ public class TrattativaController {
     }
     
     @PutMapping("/{id}/vendi")
-    public ResponseEntity<?> vendiTrattativa(@PathVariable Long id) {
+    public ResponseEntity<TrattativaResponseDTO> vendiTrattativa(@PathVariable Long id) {
         try {
             trattativaService.vendi(id);
-            return ResponseEntity.ok("Trattativa con ID " + id + " conclusa con successo");
+            return ResponseEntity.ok(new TrattativaResponseDTO("Trattativa con ID " + id + " conclusa con successo"));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new TrattativaResponseDTO(e.getMessage()));
         }
     }
-
 }

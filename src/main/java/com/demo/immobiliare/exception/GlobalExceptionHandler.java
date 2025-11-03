@@ -59,6 +59,11 @@ public class GlobalExceptionHandler {
     	return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
     
+    @ExceptionHandler(AnnuncioNotVisibleException.class)
+    public ResponseEntity<String> handleAnnuncioNotVisible(AnnuncioNotVisibleException ex) {
+    	return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
+    }
+    
     // TRATTATIVA
     
     @ExceptionHandler(TrattativaNotFoundException.class)

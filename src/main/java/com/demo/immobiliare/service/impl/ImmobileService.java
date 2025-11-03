@@ -48,7 +48,6 @@ public class ImmobileService implements IImmobileService {
         return ImmobileMapper.toDto(saved);
     }
 
-
     @Override
     public ImmobileDTO aggiornaImmobile(ImmobileDTO immobileDTO) {
         Immobile immobileEsistente = immobileRepository.findById(immobileDTO.getIdImmobile())

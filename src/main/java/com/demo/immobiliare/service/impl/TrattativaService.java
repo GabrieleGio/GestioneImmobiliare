@@ -4,6 +4,7 @@ import com.demo.immobiliare.dto.TrattativaDTO;
 import com.demo.immobiliare.dto.TrattativaPersonaleDTO;
 import com.demo.immobiliare.dto.TrattativaPropostaDTO;
 import com.demo.immobiliare.exception.AnnuncioNotFoundException;
+import com.demo.immobiliare.exception.AnnuncioNotVisibleException;
 import com.demo.immobiliare.exception.AnnuncioOwnershipException;
 import com.demo.immobiliare.exception.ImmobileOwnershipException;
 import com.demo.immobiliare.exception.InvalidImmobileStateException;
@@ -168,6 +169,10 @@ public class TrattativaService implements ITrattativaService {
         
         if (!annuncio.getCreatore().equals(utenteLog)) {
         	throw new AnnuncioOwnershipException("Non puoi visualizzare trattative di annunci che non sono tuoi");
+        }
+        
+        if (!annuncio.isVisibile()) {
+            throw new AnnuncioNotVisibleException("Le trattative per questo annuncio non sono più visibili.");
         }
         
         return trattativaRepository.findAllByAnnuncio_IdAnnuncio(idAnnuncio, pageable)

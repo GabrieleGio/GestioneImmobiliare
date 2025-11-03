@@ -1,8 +1,10 @@
 package com.demo.immobiliare.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -33,6 +35,7 @@ public class Immobile {
 
     @Column(name = "prezzo", nullable = false, precision = 12, scale = 2)
     @DecimalMin(value = "0.0", inclusive = false, message = "Il prezzo deve essere maggiore di zero")
+    @DecimalMax(value = "999999999.99", inclusive = true, message = "Il prezzo non può superare 999 milioni")
     @Digits(integer = 10, fraction = 2, message = "Prezzo non valido")
     @NotNull(message = "Il prezzo è obbligatorio")
     private BigDecimal prezzo;
@@ -49,6 +52,7 @@ public class Immobile {
 
     @Column(name = "superficie", nullable = false)
     @Min(value = 1, message = "La superficie deve essere almeno 1 m²")
+    @Max(value = 999999, message = "La superficie non può superare i 999999 m²")
     @NotNull(message = "La superficie è obbligatoria")
     private Integer superficie;
 

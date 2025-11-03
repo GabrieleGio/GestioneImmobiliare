@@ -27,18 +27,21 @@ public class Trattativa {
     @Column(name = "prezzo_offerto", nullable = false, precision = 12, scale = 2)
     @DecimalMin(value = "0.0", inclusive = false, message = "Il prezzo offerto deve essere maggiore di zero")
     @Digits(integer = 10, fraction = 2, message = "Prezzo offerto non valido")
+    @NotNull(message = "Il prezzo offerto è obbligatorio")
     private BigDecimal prezzoOfferto;
 
     @Column(name = "data_proposta", nullable = false)
+    @NotNull(message = "La data della proposta è obbligatoria")
+    @PastOrPresent(message = "La data della proposta non può essere nel futuro")
     private LocalDateTime dataProposta;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "stato", nullable = false, length = 50)
+    @NotNull(message = "Lo stato della trattativa è obbligatorio")
     private StatoTrattativa stato;
 
     @Column(name = "messaggio", length = 500)
     @Size(max = 500, message = "Il messaggio non può superare i 500 caratteri")
-    @NotBlank
     private String messaggio;
     
     public Trattativa() {}

@@ -5,7 +5,6 @@ import com.demo.immobiliare.dto.AnnuncioHomeDTO;
 import com.demo.immobiliare.dto.AnnuncioPersonaleDTO;
 import com.demo.immobiliare.exception.AnnuncioNotFoundException;
 import com.demo.immobiliare.exception.AnnuncioOwnershipException;
-import com.demo.immobiliare.exception.ImmobileAlreadySoldException;
 import com.demo.immobiliare.exception.ImmobileNotFoundException;
 import com.demo.immobiliare.exception.ImmobileOwnershipException;
 import com.demo.immobiliare.exception.UserNotFoundException;
@@ -56,12 +55,9 @@ public class AnnuncioService implements IAnnuncioService {
             throw new ImmobileOwnershipException("Non puoi creare un annuncio per un immobile che non possiedi");
         }
         
-        if (immobile.getStato().equals(StatoImmobile.VENDUTO)) {
-        	throw new ImmobileAlreadySoldException("Non puoi mettere un annuncio per un immobile venduto");
-        }
-        
         Annuncio annuncio = AnnuncioMapper.toEntity(annuncioDTO);
         annuncio.setImmobile(immobile);
+        immobile.setStato(StatoImmobile.DISPONIBILE);
         annuncio.setCreatore(utente);
         annuncio.setVenditore(immobile.getProprietario());
         Annuncio saved = annuncioRepository.save(annuncio);

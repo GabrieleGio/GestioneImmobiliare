@@ -14,6 +14,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -27,18 +29,23 @@ public class Utente {
 	
 	@Column(name = "username", nullable = false, unique = true)
 	@Size(min = 3, max = 25, message = "L'username deve essere compreso tra i 3 e i 25 caratteri")
+	@NotBlank(message = "L'username è obbligatorio")
 	private String username;
 	
 	@Column(name = "email", nullable = false, unique = true)
 	@Email
+	@NotNull(message = "L'email è obbligatoria")
+	@Size(max = 255, message = "L'email non può superare i 255 caratteri")
 	private String email;
 	
 	@Column(name = "password", nullable = false)
 	@Size(min = 8, max = 255, message = "La password deve essere composta da minimo 5 caratteri e massimo 255")
+	@NotBlank(message = "La password è obbligatoria")
 	private String password;
 	
 	@Column(name = "ruolo", nullable = false)
 	@Enumerated(EnumType.STRING)
+	@NotNull(message = "Il ruolo è obbligatorio")
 	private Ruolo ruolo = Ruolo.CLIENTE;
 	
 	@OneToMany(mappedBy = "proprietario")

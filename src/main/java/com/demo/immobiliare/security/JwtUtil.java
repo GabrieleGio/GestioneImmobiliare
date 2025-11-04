@@ -22,9 +22,10 @@ public class JwtUtil {
         this.expiration = jwtProperties.getExpiration();
     }
 
-    public String generateToken(String username) {
+    public String generateToken(String username, Long userId) {
         return JWT.create()
             .withSubject(username)
+            .withClaim("userId", userId)
             .withExpiresAt(new Date(System.currentTimeMillis() + expiration))
             .sign(algorithm);
     }

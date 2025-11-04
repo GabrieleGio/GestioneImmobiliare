@@ -34,7 +34,7 @@ public class AuthService implements IAuthService {
             throw new InvalidCredentialsException("Credenziali non valide");
         }
 
-        String token = jwtUtil.generateToken(utente.getEmail());
+        String token = jwtUtil.generateToken(utente.getEmail(), utente.getIdUtente());
         long expiresIn = jwtUtil.getExpirationTime();
 
         return new AuthResponseDTO(token, "Bearer", expiresIn);

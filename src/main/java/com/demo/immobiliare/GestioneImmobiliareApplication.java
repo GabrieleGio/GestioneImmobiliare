@@ -20,7 +20,7 @@ public class GestioneImmobiliareApplication {
 	
 	// TODO aggiungere controlli con errori custom nelle controller e finire di mettere validators nei DTO
 
-	//TODO funzioni per creare immobili tramite tasto aggiungi immobile, funzione per mettere l'annuncio di un immobile
+	//TODO funzione per mettere l'annuncio di un immobile
 	// tramite un tasto posizionato sulla card dell'immobile in questione (ogni card avra un tasto "Pubblica" o simile)
 	// ricordare i validators
 

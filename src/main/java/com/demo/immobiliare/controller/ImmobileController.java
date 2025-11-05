@@ -58,7 +58,7 @@ public class ImmobileController {
     }
 
     @PostMapping
-    public ResponseEntity<?> creaImmobile(@Valid @RequestBody ImmobileDTO immobileDTO) throws Exception {
+    public ResponseEntity<?> creaImmobile(@Valid @RequestBody ImmobileDTO immobileDTO) {
         ImmobileDTO creato = immobileService.creaImmobile(immobileDTO);
         return new ResponseEntity<>(creato, HttpStatus.CREATED);
     }

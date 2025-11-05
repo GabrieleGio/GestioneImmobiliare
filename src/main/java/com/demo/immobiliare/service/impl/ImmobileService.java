@@ -34,15 +34,16 @@ public class ImmobileService implements IImmobileService {
         this.utenteRepository = utenteRepository;
     }
 
+    //FIXME di base l'utente proprietario dell'immobile è l'utente registrato, devo permettere di metttere anche un utente diverso
     @Override
     public ImmobileDTO creaImmobile(ImmobileDTO immobileDTO) {
     	String email = SecurityContextHolder.getContext().getAuthentication().getName();
-    	Utente proprietario = utenteRepository.findByEmail(email)
+    	Utente utenteReg = utenteRepository.findByEmail(email)
     	    .orElseThrow(() -> new UserNotFoundException("Utente non trovato"));
 
 
         Immobile immobile = ImmobileMapper.toEntity(immobileDTO);
-        immobile.setProprietario(proprietario);
+        immobile.setProprietario(utenteReg);
 
         Immobile saved = immobileRepository.save(immobile);
         return ImmobileMapper.toDto(saved);

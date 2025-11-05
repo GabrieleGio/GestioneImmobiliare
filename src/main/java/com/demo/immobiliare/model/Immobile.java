@@ -62,7 +62,7 @@ public class Immobile {
     @Pattern(
         regexp = "^[a-zA-Z0-9àèéìòùÀÈÉÌÒÙ\\s,.'-]+$",
         message = "L'indirizzo contiene caratteri non validi"
-    )
+    )	
     private String indirizzo;
     
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

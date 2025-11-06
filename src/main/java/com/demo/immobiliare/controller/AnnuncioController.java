@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/annunci")
@@ -36,10 +35,8 @@ public class AnnuncioController {
 
     @GetMapping("/{id}")
     public ResponseEntity<AnnuncioDTO> trovaPerId(@PathVariable Long id) {
-        Optional<AnnuncioDTO> annuncioOpt = annuncioService.trovaPerId(id);
-        return annuncioOpt
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        AnnuncioDTO annuncio = annuncioService.trovaPerId(id).get();
+        return ResponseEntity.ok(annuncio);
     }
     
     @GetMapping("/paginate")
@@ -76,10 +73,25 @@ public class AnnuncioController {
 
 
     @PostMapping
-    public ResponseEntity<?> creaAnnuncio(@Valid @RequestBody AnnuncioDTO annuncioDTO) throws Exception {
-        AnnuncioDTO creato = annuncioService.creaAnnuncio(annuncioDTO);
-        return new ResponseEntity<>(creato, HttpStatus.CREATED);
+    public ResponseEntity<?> creaAnnuncio(@Valid @RequestBody AnnuncioDTO annuncioDTO) {
+        try {
+			AnnuncioDTO creato = annuncioService.creaAnnuncio(annuncioDTO);
+			return new ResponseEntity<>(creato, HttpStatus.CREATED);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+		}
     }
+    
+    @PostMapping("/pubblica/{idImmobile}")
+    public ResponseEntity<?> pubblicaAnnuncio(@PathVariable Long idImmobile) {
+        try {
+            AnnuncioDTO creato = annuncioService.pubblicaAnnuncio(idImmobile);
+            return new ResponseEntity<>(creato, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<?> aggiornaAnnuncio(@PathVariable Long id, @Valid @RequestBody AnnuncioDTO annuncioDTO) {

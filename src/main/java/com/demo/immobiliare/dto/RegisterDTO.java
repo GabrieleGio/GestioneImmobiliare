@@ -2,20 +2,26 @@ package com.demo.immobiliare.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 public class RegisterDTO {
 
-    @NotBlank(message = "Il nome utente è obbligatorio")
+	@Size(min = 3, max = 25, message = "L'username deve essere compreso tra i 3 e i 25 caratteri")
+	@NotBlank(message = "L'username è obbligatorio")
     private String username;
 
-    @NotBlank(message = "L'email è obbligatoria")
-    @Email(message = "Formato email non valido")
+	@Email
+	@NotNull(message = "L'email è obbligatoria")
+	@Size(max = 255, message = "L'email non può superare i 255 caratteri")
     private String email;
 
-    @NotBlank(message = "La password è obbligatoria")
+	@Size(min = 8, max = 255, message = "La password deve essere composta da minimo 5 caratteri e massimo 255")
+	@NotBlank(message = "La password è obbligatoria")
     private String password;
 
-    @NotBlank(message = "La conferma password è obbligatoria")
+	@Size(min = 8, max = 255, message = "La conferma della password deve essere composta da minimo 5 caratteri e massimo 255")
+	@NotBlank(message = "La conferma della password è obbligatoria")
     private String confirmPassword;
 	
 	public RegisterDTO() {}

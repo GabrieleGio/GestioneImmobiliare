@@ -240,17 +240,18 @@ public class TrattativaService implements ITrattativaService {
 		
 		immobileVenduto.setStato(StatoImmobile.VENDUTO);
 		
+		// CANCELLAZIONE ANNUNCIO E TRATTATIVE COLLEGATE A ESSO A VENDITA CONCLUSA
+		//FIXME per ora non posso salvare nè storico degli annunci e nè storico delle trattative
 		annuncio.setVisibile(false);
+		List<Trattativa> trattativeCollegate = trattativaRepository.findAllByAnnuncio_IdAnnuncio(annuncio.getIdAnnuncio());
+		trattativaRepository.deleteAll(trattativeCollegate);
+		annuncioRepository.delete(annuncio);
 		
 		immobileRepository.save(immobileVenduto);
 		
 		utenteRepository.save(venditore);
 		
 		utenteRepository.save(acquirente);
-		
-		annuncioRepository.save(annuncio);
-		
-		trattativaRepository.save(trattativa);
-		
+				
 	}
 }

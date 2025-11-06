@@ -28,7 +28,7 @@ public class AuthService implements IAuthService {
     @Override
     public AuthResponseDTO login(LoginDTO request) {
         Utente utente = utenteRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new UserNotFoundException("Credenziali non valide"));
+                .orElseThrow(() -> new InvalidCredentialsException("Credenziali non valide"));
 
         if (!passwordEncoder.matches(request.getPassword(), utente.getPassword())) {
             throw new InvalidCredentialsException("Credenziali non valide");

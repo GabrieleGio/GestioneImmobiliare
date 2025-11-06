@@ -18,10 +18,7 @@ public class GestioneImmobiliareApplication {
 	// sistemare e implementare le service per aggiornare ed eliminare
 	// mettere controlli lato front end di quando un email o username è già in uso
 	
-	// TODO aggiungere controlli con errori custom nelle controller e finire di mettere validators nei DTO
-
-	//TODO funzione per mettere l'annuncio di un immobile
-	// tramite un tasto posizionato sulla card dell'immobile in questione (ogni card avra un tasto "Pubblica" o simile)
-	// ricordare i validators
-
+	// TODO gestire gli errori lato front end (evitare i return of null) e TOGLIERE GESTIONE ERRORI DALLE CONTROLLER
+	// inclusi anche gli optional, perchè fa tutto la service + il global exception handler
+	
 

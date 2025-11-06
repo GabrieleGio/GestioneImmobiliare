@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface IAnnuncioService {
     AnnuncioDTO creaAnnuncio(AnnuncioDTO annuncioDTO);
+    AnnuncioDTO pubblicaAnnuncio(Long idAnnuncio);
     AnnuncioDTO aggiornaAnnuncio(AnnuncioDTO annuncioDTO);
     void eliminaAnnuncio(Long id);
     Optional<AnnuncioDTO> trovaPerId(Long id);

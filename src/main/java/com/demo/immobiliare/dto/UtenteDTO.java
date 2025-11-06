@@ -2,11 +2,25 @@ package com.demo.immobiliare.dto;
 
 import com.demo.immobiliare.model.Ruolo;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 public class UtenteDTO {
 
     private Long idUtente;
+    
+    @Size(min = 3, max = 25, message = "L'username deve essere compreso tra i 3 e i 25 caratteri")
+	@NotBlank(message = "L'username è obbligatorio")
     private String username;
+    
+    @Email
+	@NotNull(message = "L'email è obbligatoria")
+	@Size(max = 255, message = "L'email non può superare i 255 caratteri")
     private String email;
+    
+    @NotNull(message = "Il ruolo è obbligatorio")
     private Ruolo ruolo;
 
     public UtenteDTO() {

@@ -8,6 +8,7 @@ import com.demo.immobiliare.exception.UserNotFoundException;
 import com.demo.immobiliare.mapper.ImmobileMapper;
 import com.demo.immobiliare.model.Immobile;
 import com.demo.immobiliare.model.Utente;
+import com.demo.immobiliare.repository.AnnuncioRepository;
 import com.demo.immobiliare.repository.ImmobileRepository;
 import com.demo.immobiliare.repository.UtenteRepository;
 import com.demo.immobiliare.service.IImmobileService;
@@ -27,11 +28,13 @@ public class ImmobileService implements IImmobileService {
 
     private final ImmobileRepository immobileRepository;
     private final UtenteRepository utenteRepository;
+    private final AnnuncioRepository annuncioRepository;
 
     @Autowired
-    public ImmobileService(ImmobileRepository immobileRepository, UtenteRepository utenteRepository) {
+    public ImmobileService(ImmobileRepository immobileRepository, UtenteRepository utenteRepository, AnnuncioRepository annuncioRepository) {
         this.immobileRepository = immobileRepository;
         this.utenteRepository = utenteRepository;
+        this.annuncioRepository = annuncioRepository;
     }
 
     //FIXME di base l'utente proprietario dell'immobile è l'utente registrato, devo permettere di metttere anche un utente diverso
@@ -98,21 +101,26 @@ public class ImmobileService implements IImmobileService {
 		                   .collect(Collectors.toList());
 	}
     
-    public Page<ImmobilePersonaleDTO> trovaTuttiPersonaliPaginati(Pageable pageable) {
-    	String emailUtenteLog = SecurityContextHolder.getContext().getAuthentication().getName();
-        Utente utenteLog = utenteRepository.findByEmail(emailUtenteLog)
-            .orElseThrow(() -> new UserNotFoundException("Utente non trovato"));
-        
-        return immobileRepository.findAllByProprietario_IdUtente(utenteLog.getIdUtente(), pageable)
-                .map(immobile -> new ImmobilePersonaleDTO(
-                        immobile.getIdImmobile(),
-                        immobile.getTitolo(),
-                        immobile.getDescrizione(),
-                        immobile.getPrezzo(),
-                        immobile.getTipologia(),
-                        immobile.getStato(),
-                        immobile.getSuperficie(),
-                        immobile.getIndirizzo()
-                ));
-    }
+	public Page<ImmobilePersonaleDTO> trovaTuttiPersonaliPaginati(Pageable pageable) {
+	    String emailUtenteLog = SecurityContextHolder.getContext().getAuthentication().getName();
+	    Utente utenteLog = utenteRepository.findByEmail(emailUtenteLog)
+	        .orElseThrow(() -> new UserNotFoundException("Utente non trovato"));
+
+	    return immobileRepository.findAllByProprietario_IdUtente(utenteLog.getIdUtente(), pageable)
+	        .map(immobile -> {
+	            boolean hasAnnuncio = annuncioRepository.existsByImmobile_IdImmobile(immobile.getIdImmobile());
+	            return new ImmobilePersonaleDTO(
+	                immobile.getIdImmobile(),
+	                immobile.getTitolo(),
+	                immobile.getDescrizione(),
+	                immobile.getPrezzo(),
+	                immobile.getTipologia(),
+	                immobile.getStato(),
+	                immobile.getSuperficie(),
+	                immobile.getIndirizzo(),
+	                hasAnnuncio
+	            );
+	        });
+	}
+
 }

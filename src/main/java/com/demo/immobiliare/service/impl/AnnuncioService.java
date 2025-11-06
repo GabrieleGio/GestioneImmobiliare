@@ -24,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -55,6 +56,11 @@ public class AnnuncioService implements IAnnuncioService {
             throw new ImmobileOwnershipException("Non puoi creare un annuncio per un immobile che non possiedi");
         }
         
+        
+        if (annuncioRepository.existsByImmobile_IdImmobile(immobile.getIdImmobile())) {
+            throw new IllegalStateException("Esiste già un annuncio per questo immobile");
+        }
+        
         Annuncio annuncio = AnnuncioMapper.toEntity(annuncioDTO);
         annuncio.setImmobile(immobile);
         immobile.setStato(StatoImmobile.DISPONIBILE);
@@ -63,6 +69,40 @@ public class AnnuncioService implements IAnnuncioService {
         Annuncio saved = annuncioRepository.save(annuncio);
         return AnnuncioMapper.toDto(saved);
     }
+    
+    @Override
+    public AnnuncioDTO pubblicaAnnuncio(Long idImmobile) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Utente utente = utenteRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("Utente non trovato"));
+
+        Immobile immobile = immobileRepository.findById(idImmobile)
+                .orElseThrow(() -> new ImmobileNotFoundException("Immobile non trovato"));
+
+        if (!immobile.getProprietario().getIdUtente().equals(utente.getIdUtente())) {
+            throw new ImmobileOwnershipException("Non puoi pubblicare un annuncio per un immobile che non possiedi");
+        }
+
+        if (annuncioRepository.existsByImmobile_IdImmobile(idImmobile)) {
+            throw new IllegalStateException("Esiste già un annuncio per questo immobile");
+        }
+
+        Annuncio annuncio = new Annuncio();
+        annuncio.setImmobile(immobile);
+        annuncio.setVisibile(true);
+        annuncio.setDataPubblicazione(LocalDateTime.now());
+        annuncio.setVisualizzazioni(0);
+        annuncio.setCreatore(utente);
+        annuncio.setVenditore(immobile.getProprietario());
+
+        immobile.setStato(StatoImmobile.DISPONIBILE);
+
+        Annuncio saved = annuncioRepository.save(annuncio);
+
+        return AnnuncioMapper.toDto(saved);
+    }
+
+
 
     @Override
     public AnnuncioDTO aggiornaAnnuncio(AnnuncioDTO annuncioDTO) {

@@ -8,4 +8,5 @@ import com.demo.immobiliare.model.Annuncio;
 
 public interface AnnuncioRepository extends JpaRepository<Annuncio, Long>{
 	Page<Annuncio> findAllByCreatore_IdUtente(Long creatoreId, Pageable pageable);
+	boolean existsByImmobile_IdImmobile(Long immobileId);
 }

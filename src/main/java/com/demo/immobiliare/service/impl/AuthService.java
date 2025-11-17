@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import com.demo.immobiliare.dto.AuthResponseDTO;
 import com.demo.immobiliare.dto.LoginDTO;
 import com.demo.immobiliare.exception.InvalidCredentialsException;
-import com.demo.immobiliare.exception.UserNotFoundException;
 import com.demo.immobiliare.model.Utente;
 import com.demo.immobiliare.repository.UtenteRepository;
 import com.demo.immobiliare.security.JwtUtil;

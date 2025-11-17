@@ -12,12 +12,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(EmailAlreadyInUseException.class)
     public ResponseEntity<String> handleEmailAlreadyInUse(EmailAlreadyInUseException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(UsernameAlreadyInUseException.class)
     public ResponseEntity<String> handleUsernameAlreadyInUse(UsernameAlreadyInUseException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(UserNotFoundException.class)

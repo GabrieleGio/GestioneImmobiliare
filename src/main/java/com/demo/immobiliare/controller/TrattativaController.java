@@ -49,7 +49,7 @@ public class TrattativaController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "idTrattativa") String sortBy,
             @RequestParam(defaultValue = "asc") String direction
-    ) throws Exception {
+    ) {
     	Sort sort = direction.equalsIgnoreCase("desc")
                 ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
@@ -89,22 +89,14 @@ public class TrattativaController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> aggiornaTrattativa(@PathVariable Long id, @Valid @RequestBody TrattativaDTO trattativaDTO) {
-        try {
-            trattativaDTO.setIdTrattativa(id);
-            TrattativaDTO aggiornato = trattativaService.aggiornaTrattativa(trattativaDTO);
-            return ResponseEntity.ok(aggiornato);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        trattativaDTO.setIdTrattativa(id);
+        TrattativaDTO aggiornato = trattativaService.aggiornaTrattativa(trattativaDTO);
+        return ResponseEntity.ok(aggiornato);
     }
     
     @PutMapping("/{id}/vendi")
     public ResponseEntity<TrattativaResponseDTO> vendiTrattativa(@PathVariable Long id) {
-        try {
-            trattativaService.vendi(id);
-            return ResponseEntity.ok(new TrattativaResponseDTO("Trattativa con ID " + id + " conclusa con successo"));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new TrattativaResponseDTO(e.getMessage()));
-        }
+        trattativaService.vendi(id);
+        return ResponseEntity.ok(new TrattativaResponseDTO("Trattativa con ID " + id + " conclusa con successo"));
     }
 }

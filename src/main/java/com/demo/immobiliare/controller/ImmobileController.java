@@ -39,7 +39,7 @@ public class ImmobileController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "idImmobile") String sortBy,
             @RequestParam(defaultValue = "asc") String direction
-    ) throws Exception {
+    ) {
     	Sort sort = direction.equalsIgnoreCase("desc")
                 ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
@@ -65,12 +65,8 @@ public class ImmobileController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> aggiornaImmobile(@PathVariable Long id, @Valid @RequestBody ImmobileDTO immobileDTO) {
-        try {
-            immobileDTO.setIdImmobile(id);
-            ImmobileDTO aggiornato = immobileService.aggiornaImmobile(immobileDTO);
-            return ResponseEntity.ok(aggiornato);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        immobileDTO.setIdImmobile(id);
+        ImmobileDTO aggiornato = immobileService.aggiornaImmobile(immobileDTO);
+        return ResponseEntity.ok(aggiornato);
     }
 }

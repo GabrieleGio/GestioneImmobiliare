@@ -61,7 +61,7 @@ public class AnnuncioController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "idAnnuncio") String sortBy,
             @RequestParam(defaultValue = "asc") String direction
-    ) throws Exception {
+    ) {
         Sort sort = direction.equalsIgnoreCase("desc")
                 ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
@@ -74,33 +74,21 @@ public class AnnuncioController {
 
     @PostMapping
     public ResponseEntity<?> creaAnnuncio(@Valid @RequestBody AnnuncioDTO annuncioDTO) {
-        try {
-			AnnuncioDTO creato = annuncioService.creaAnnuncio(annuncioDTO);
-			return new ResponseEntity<>(creato, HttpStatus.CREATED);
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-		}
+		AnnuncioDTO creato = annuncioService.creaAnnuncio(annuncioDTO);
+		return new ResponseEntity<>(creato, HttpStatus.CREATED);
     }
     
     @PostMapping("/pubblica/{idImmobile}")
     public ResponseEntity<?> pubblicaAnnuncio(@PathVariable Long idImmobile) {
-        try {
-            AnnuncioDTO creato = annuncioService.pubblicaAnnuncio(idImmobile);
-            return new ResponseEntity<>(creato, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        AnnuncioDTO creato = annuncioService.pubblicaAnnuncio(idImmobile);
+        return new ResponseEntity<>(creato, HttpStatus.CREATED);
     }
 
 
     @PutMapping("/{id}")
     public ResponseEntity<?> aggiornaAnnuncio(@PathVariable Long id, @Valid @RequestBody AnnuncioDTO annuncioDTO) {
-        try {
-            annuncioDTO.setIdAnnuncio(id);
-            AnnuncioDTO aggiornato = annuncioService.aggiornaAnnuncio(annuncioDTO);
-            return ResponseEntity.ok(aggiornato);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    	annuncioDTO.setIdAnnuncio(id);
+        AnnuncioDTO aggiornato = annuncioService.aggiornaAnnuncio(annuncioDTO);
+        return ResponseEntity.ok(aggiornato);
     }
 }

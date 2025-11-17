@@ -57,22 +57,14 @@ public class UtenteController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registraUtente(@Valid @RequestBody RegisterDTO registerDTO) {
-        try {
-            UtenteDTO utenteCreato = utenteService.registraUtente(registerDTO);
-            return new ResponseEntity<>(utenteCreato, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        UtenteDTO utenteCreato = utenteService.registraUtente(registerDTO);
+        return new ResponseEntity<>(utenteCreato, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> aggiornaUtente(@PathVariable Long id, @Valid @RequestBody UtenteDTO utenteDTO) {
-        try {
-            utenteDTO.setIdUtente(id);
-            UtenteDTO utenteAggiornato = utenteService.aggiornaUtente(utenteDTO);
-            return ResponseEntity.ok(utenteAggiornato);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        utenteDTO.setIdUtente(id);
+        UtenteDTO utenteAggiornato = utenteService.aggiornaUtente(utenteDTO);
+        return ResponseEntity.ok(utenteAggiornato);
     }
 }

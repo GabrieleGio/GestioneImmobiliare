@@ -63,6 +63,14 @@ public class TrattativaService implements ITrattativaService {
 
         Annuncio annuncio = annuncioRepository.findById(propostaDTO.getIdAnnuncio())
             .orElseThrow(() -> new AnnuncioNotFoundException("Annuncio non trovato"));
+        
+        if (utente.equals(annuncio.getVenditore())) {
+        	throw new SameUserTrattativaException("Non puoi creare trattative per i tuoi immobili");
+        }
+        
+        if (!annuncio.getImmobile().getStato().equals(StatoImmobile.DISPONIBILE)) {
+			throw new InvalidImmobileStateException("L'immobile dell'annuncio non è più disponibile");
+		}
 
         Trattativa trattativa = new Trattativa();
         trattativa.setUtente(utente);
@@ -195,9 +203,6 @@ public class TrattativaService implements ITrattativaService {
 		Trattativa trattativa = trattativaRepository.findById(idTrattativa)
 			    .orElseThrow(() -> new TrattativaNotFoundException("Trattativa non trovata"));
 		
-		Annuncio annuncio = annuncioRepository.findById(trattativa.getAnnuncio().getIdAnnuncio())
-				.orElseThrow(() -> new AnnuncioNotFoundException("Annuncio corrispondente non trovato"));
-		
 		if (trattativa.getStato().equals(StatoTrattativa.CONCLUSA)) {
 			throw new InvalidTrattativaStateException("Non puoi accettare una trattativa già conclusa");
 		}
@@ -206,9 +211,17 @@ public class TrattativaService implements ITrattativaService {
 			throw new InvalidTrattativaStateException("La trattativa non è in stato di attesa e non può essere accettata");
 		}
 		
+		Annuncio annuncio = annuncioRepository.findById(trattativa.getAnnuncio().getIdAnnuncio())
+				.orElseThrow(() -> new AnnuncioNotFoundException("Annuncio corrispondente non trovato"));
+		
+		
 		String emailUtenteLog = SecurityContextHolder.getContext().getAuthentication().getName();
         Utente utenteLog = utenteRepository.findByEmail(emailUtenteLog)
             .orElseThrow(() -> new UserNotFoundException("Utente non trovato"));
+        
+        if (!annuncio.getCreatore().equals(utenteLog)) {
+        	throw new AnnuncioOwnershipException("Non puoi gestire trattative di annunci che non sono tuoi");
+        }
 		
 		Utente venditore = annuncio.getVenditore();
 		
@@ -224,9 +237,6 @@ public class TrattativaService implements ITrattativaService {
 			throw new InvalidImmobileStateException("L'immobile non è più disponibile");
 		}
 		
-		if (!annuncio.getCreatore().equals(utenteLog)) {
-        	throw new AnnuncioOwnershipException("Non puoi gestire trattative di annunci che non sono tuoi");
-        }
 		
 		if (!immobileVenduto.getProprietario().equals(venditore)) {
 			throw new ImmobileOwnershipException("L'immobile non è posseduto dal venditore");
@@ -253,5 +263,36 @@ public class TrattativaService implements ITrattativaService {
 		
 		utenteRepository.save(acquirente);
 				
+	}
+	
+	@Override
+	@Transactional
+	public void rifiuta(Long idTrattativa) {
+		
+		Trattativa trattativa = trattativaRepository.findById(idTrattativa)
+			    .orElseThrow(() -> new TrattativaNotFoundException("Trattativa non trovata"));
+		
+		if (trattativa.getStato().equals(StatoTrattativa.CONCLUSA)) {
+			throw new InvalidTrattativaStateException("Non puoi rifiutare una trattativa già conclusa");
+		}
+		
+		if (!trattativa.getStato().equals(StatoTrattativa.IN_ATTESA)) {
+			throw new InvalidTrattativaStateException("La trattativa non è in stato di attesa e non può essere rifiutata");
+		}
+		
+		Annuncio annuncio = annuncioRepository.findById(trattativa.getAnnuncio().getIdAnnuncio())
+				.orElseThrow(() -> new AnnuncioNotFoundException("Annuncio corrispondente non trovato"));
+		
+		String emailUtenteLog = SecurityContextHolder.getContext().getAuthentication().getName();
+        Utente utenteLog = utenteRepository.findByEmail(emailUtenteLog)
+            .orElseThrow(() -> new UserNotFoundException("Utente non trovato"));
+		
+		if (!annuncio.getCreatore().equals(utenteLog)) {
+        	throw new AnnuncioOwnershipException("Non puoi gestire trattative di annunci che non sono tuoi");
+        }
+		
+		trattativa.setStato(StatoTrattativa.RIFIUTATA);
+		trattativaRepository.save(trattativa);
+		
 	}
 }

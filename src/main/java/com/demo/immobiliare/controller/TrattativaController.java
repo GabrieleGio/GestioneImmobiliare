@@ -99,4 +99,10 @@ public class TrattativaController {
         trattativaService.vendi(id);
         return ResponseEntity.ok(new TrattativaResponseDTO("Trattativa con ID " + id + " conclusa con successo"));
     }
+    
+    @PutMapping("/{id}/rifiuta")
+    public ResponseEntity<TrattativaResponseDTO> rifiutaTrattativa(@PathVariable Long id) {
+    	trattativaService.rifiuta(id);
+    	return ResponseEntity.ok(new TrattativaResponseDTO("Trattativa con ID " + id + "rifiutata"));
+    }
 }

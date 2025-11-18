@@ -20,4 +20,5 @@ public interface ITrattativaService {
     Page<TrattativaPersonaleDTO> trovaTuttiPersonaliPaginati(Pageable pageable);
     Page<TrattativaDTO> trovaTuttiPerAnnuncioPersonale(Long idAnnuncio, Pageable pageable);
     void vendi(Long id);
+    void rifiuta(Long id);
 }

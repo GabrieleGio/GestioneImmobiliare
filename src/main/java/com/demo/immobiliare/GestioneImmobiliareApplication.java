@@ -14,7 +14,7 @@ public class GestioneImmobiliareApplication {
 		SpringApplication.run(GestioneImmobiliareApplication.class, args);
 	}
 
-}   //TODO fare una funzione rifiuta trattativa con controlli simili a quella per venderla
+}   //TODO finire funzione rifiuta trattativa con controlli simili a quella per venderla
 	// sistemare e implementare le service per aggiornare ed eliminare
 	
 	// TODO gestire gli errori lato front end (evitare i return of null)
